@@ -1,5 +1,5 @@
 {
-    "app_name": "DART Plot Tool",
+    "app_name": "DART_Plot",
     "author": "Jason Ngo",
     "main_module": "src/main/python/main.py",
     "version": "0.0.0"
