@@ -5,3 +5,11 @@ __pycache__/
 
 # Text Editor files
 .vscode/settings.json
+
+# fbs Files
+target/
+
+# Virtual env
+env/
+
+# Old files
