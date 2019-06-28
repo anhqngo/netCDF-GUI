@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer/main_window.ui'
+# Form implementation generated from reading ui file './src/main/resources/designer/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,23 +11,37 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1024, 673)
+        MainWindow.resize(409, 418)
         MainWindow.setMinimumSize(QtCore.QSize(10, 10))
         MainWindow.setMouseTracking(False)
         MainWindow.setAutoFillBackground(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(460, 430, 113, 32))
-        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.headerLabel = QtWidgets.QLabel(self.frame)
+        self.headerLabel.setObjectName("headerLabel")
+        self.verticalLayout.addWidget(self.headerLabel)
+        self.headerContents = QtWidgets.QTextBrowser(self.frame)
+        self.headerContents.setObjectName("headerContents")
+        self.verticalLayout.addWidget(self.headerContents)
+        self.horizontalLayout.addWidget(self.frame)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 409, 22))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
         self.menuPlot = QtWidgets.QMenu(self.menubar)
         self.menuPlot.setObjectName("menuPlot")
+        self.menuHelp = QtWidgets.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -42,12 +56,21 @@ class Ui_MainWindow(object):
         self.actionSave.setObjectName("actionSave")
         self.actionCreate_Plot = QtWidgets.QAction(MainWindow)
         self.actionCreate_Plot.setObjectName("actionCreate_Plot")
+        self.actionSave_Plot = QtWidgets.QAction(MainWindow)
+        self.actionSave_Plot.setObjectName("actionSave_Plot")
+        self.actionCombine_Plot = QtWidgets.QAction(MainWindow)
+        self.actionCombine_Plot.setObjectName("actionCombine_Plot")
+        self.actionView_Documentation = QtWidgets.QAction(MainWindow)
+        self.actionView_Documentation.setObjectName("actionView_Documentation")
         self.menuFile.addAction(self.actionOpen)
-        self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionSave)
         self.menuPlot.addAction(self.actionCreate_Plot)
+        self.menuPlot.addAction(self.actionSave_Plot)
+        self.menuPlot.addAction(self.actionCombine_Plot)
+        self.menuHelp.addAction(self.actionView_Documentation)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuPlot.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -55,12 +78,16 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "netCDF Plotting GUI"))
-        self.pushButton.setText(_translate("MainWindow", "Push me"))
+        self.headerLabel.setText(_translate("MainWindow", "Header Contents"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuPlot.setTitle(_translate("MainWindow", "Plot"))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionFile.setText(_translate("MainWindow", "File"))
         self.actionOpen.setText(_translate("MainWindow", "Open..."))
         self.actionNew.setText(_translate("MainWindow", "New"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionCreate_Plot.setText(_translate("MainWindow", "Create Plot"))
+        self.actionSave_Plot.setText(_translate("MainWindow", "Save Plot"))
+        self.actionCombine_Plot.setText(_translate("MainWindow", "Combine Plot"))
+        self.actionView_Documentation.setText(_translate("MainWindow", "View Documentation"))
 

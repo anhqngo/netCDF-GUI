@@ -9,7 +9,6 @@ from ui.main_window import Ui_MainWindow
 
 # NetCDF packages
 import netCDF4
-import xarray
 import xarray as xr
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
@@ -37,7 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.ctx = ctx
 
-        self.test_push_button.clicked.connect(
+        self.actionOpen.triggered.connect(
             self.open_file_dialog)
         version = self.ctx.build_settings['version']
         self.setWindowTitle(
@@ -65,23 +64,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, "QFileDialog.getSaveFileName()", "",
             "All Files (*);;Text Files (*.txt)", options=options)
         if fileName:
-            ds = xr.open_dataset(fileName, decode_times=False)
+            self.read_file(fileName)
 
     def read_file(self, fileName):
         """ Display the general information about the dataset and list all the 
         variables
-        """        
-        print(file)
-    
-    def scatter_plot(self, ds):
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-        ax.stock_img()
-        ax.coastlines()
-        sc = plt.scatter(ds['lon'].values, ds['lat'].values,
-                        c=ds['observation'].values)
-        plt.colorbar(sc)
-        plt.show()
+        """
+        ds = xr.open_dataset(fileName, decode_times=False)
+        print(ds)
+
+    # def scatter_plot(self, ds):
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+    #     ax.stock_img()
+    #     ax.coastlines()
+    #     sc = plt.scatter(ds['lon'].values, ds['lat'].values,
+    #                     c=ds['observation'].values)
+    #     plt.colorbar(sc)
+    #     plt.show()
 
 
 if __name__ == '__main__':
