@@ -3,8 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Text Editor files
-.vscode/settings.json
+# IDE files
+.vscode/
+.idea/
 
 # fbs Files
 target/
@@ -12,4 +13,5 @@ target/
 # Virtual env
 env/
 
-# Old files
+# MacOS files
+.DS_Store
