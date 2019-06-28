@@ -1,0 +1,18 @@
+{
+    "python.pythonPath": "env/bin/python",
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=PyQt5",
+        "--disable=all",
+        "--enable=F,E",
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "explorer.confirmDragAndDrop": false,
+    "files.exclude": {
+        "env/": true,
+        "target/": true,
+        "**/__pycache__": true,
+        ".idea/": true
+    },
+}
