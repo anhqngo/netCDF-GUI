@@ -7,6 +7,8 @@ A GUI application to visualize netCDF point observation files.
 ## Installing
 
 ### Prerequisites
+- netCDF (ncdump, ncgen, nco). See website.
+- Python 3 and pip
 
 ### Downloading
 

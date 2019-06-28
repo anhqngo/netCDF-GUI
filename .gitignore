@@ -4,10 +4,10 @@ __pycache__/
 *$py.class
 
 # IDE files
-.vscode/
+# .vscode/
 .idea/
 
-# fbs Files
+# fbs installation files
 target/
 
 # Virtual env
@@ -15,3 +15,9 @@ env/
 
 # MacOS files
 .DS_Store
+
+# netCDF CDF Files
+**.cdl
+
+# Jupyter Notebook files
+.ipynb_checkpoints
