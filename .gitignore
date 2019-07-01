@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # IDE files
-# .vscode/
+.vscode/
 .idea/
 
 # fbs installation files
@@ -21,3 +21,4 @@ env/
 
 # Jupyter Notebook files
 .ipynb_checkpoints
+tests/jupyter_tests
