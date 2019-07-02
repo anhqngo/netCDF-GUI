@@ -22,3 +22,6 @@ env/
 # Jupyter Notebook files
 .ipynb_checkpoints
 tests/jupyter_tests
+
+# netCDF files
+*.nc
