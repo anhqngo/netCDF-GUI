@@ -25,7 +25,7 @@ from metpy.testing import get_test_data
 from metpy.units import units
 
 
-TEST = 1
+TEST = 0
 TEST_FILE = "/Users/jngo/netCDF-GUI/tests/datasets/ds_1_point.nc"
 
 
@@ -108,15 +108,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Display a basic geo scatter plot of observation data
         """
-        temp = self.get_ds_subset()
+        ds_subset = self.get_ds_subset()
         try:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
             ax.stock_img()
             # sc = plt.scatter(self.ds['lon'].values, self.ds['lat'].values,
             #                  c=self.ds[selected_var].values)
-            sc = plt.scatter(temp['lon'].values, temp['lat'].values,
-                             c=temp[selected_var].values)
+            sc = plt.scatter(ds_subset['lon'].values, ds_subset['lat'].values,
+                             c=ds_subset[selected_var].values)
 
             plt.colorbar(sc)
             plt.title("{} Data".format(selected_var.capitalize()))
@@ -134,6 +134,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.dialog = SubsetLocationDialog()
         self.dialog.exec_()
 
+        # TODO: make the code below more compact
         lon_max = self.dialog.lon_max_input.text()
         lon_min = self.dialog.lon_min_input.text()
         lat_max = self.dialog.lat_max_input.text()
@@ -144,11 +145,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         lat_max = string_to_float_max(lat_max)
         lat_min = string_to_float_min(lat_min)
 
-        self.ds_temp = self.ds.where((
-            (lat_max >= self.ds.coords['lat']).all() &
-            (lat_min <= self.ds.coords['lat']).all() &
-            (lon_max >= self.ds.coords['lon']).all() &
-            (lon_min <= self.ds.coords['lon']).all()), drop=True)
+        self.ds_temp = self.ds.where(
+            lat_max >= self.ds.coords['lat'], drop=True)
+        self.ds_temp = self.ds_temp.where(
+            lat_min <= self.ds_temp.coords['lat'], drop=True)
+        self.ds_temp = self.ds_temp.where(
+            lon_max >= self.ds_temp.coords['lon'], drop=True)
+        self.ds_temp = self.ds_temp.where(
+            lon_min <= self.ds_temp.coords['lon'], drop=True)
 
         return self.ds_temp
 
