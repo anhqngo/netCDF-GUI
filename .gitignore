@@ -24,4 +24,7 @@ env/
 tests/jupyter_tests
 
 # netCDF files
-*.nc
+# *.nc
+
+# Manual scripts
+format.sh
