@@ -1,9 +1,10 @@
 # Miscelleneous packages
 import sys
 import numpy as np
+import itertools
 
 # PyQt Modules
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMainWindow, QDialog, QFileDialog
 from fbs_runtime.application_context.PyQt5 import ApplicationContext, cached_property
 
 # UI Classes
@@ -12,17 +13,22 @@ from ui.subset_location_dialog import Ui_subset_location_dialog
 
 # NetCDF packages
 import xarray as xr
+from netCDF4 import Dataset
 
-# Plotting modules
-import matplotlib
+# Matplotlib
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.collections import LineCollection, PolyCollection
+
+# Cartopy
+import cartopy.feature
+from cartopy.mpl.patch import geos_to_path
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
 
 # MetPy packages
-import metpy.calc as mpcalc
-from metpy.testing import get_test_data
-from metpy.units import units
+# import metpy.calc as mpcalc
+# from metpy.testing import get_test_data
+# from metpy.units import units
 
 
 TEST = 0
@@ -94,21 +100,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables on the GUI
         """
         self.ds = xr.open_dataset(fileName, decode_times=False)
+        self.rootgrp = Dataset(fileName, "r", format="NETCDF4")
         self.headerContents.setText(
             "File name: {}".format(fileName) + "\n" + str(self.ds))
         self.variableList.addItems(list(self.ds.data_vars))
         self.variableList.itemDoubleClicked.connect(self.show_item)
 
+        groupList = []
+        for children in walktree(self.rootgrp):
+            for child in children:
+                groupList.append(child.name)
+        self.groupContents.addItems(groupList)
+
     def show_item(self, item):
         selected_var = item.text()
         self.debugContents.append("Selected variable: {}".format(selected_var))
         self.scatter_plot(selected_var)
+        self.scatter_plot_3d(selected_var)
 
     def scatter_plot(self, selected_var):
         """
         Display a basic geo scatter plot of observation data
         """
+
+        self.debugContents.append("Processing scatter plot 2D")
         ds_subset = self.get_ds_subset()
+        
         try:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
@@ -119,9 +136,77 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                              c=ds_subset[selected_var].values)
 
             plt.colorbar(sc)
+
+            # TODO: the following two lines don't seem to do anything
+            plt.xlabel("X Label")
+            plt.ylabel("Y label")
+
             plt.title("{} Data".format(selected_var.capitalize()))
             plt.show()
             self.debugContents.append("Scatter Plot of {}".format(
+                selected_var.capitalize()))
+        
+        except Exception as e:
+            self.debugContents.append("Error: {}".format(str(e)))
+
+    def scatter_plot_3d(self, selected_var):
+        """
+        Display 3D scatter plot of selected variable
+        """
+
+        self.debugContents.append("Processing scatter plot 3D")
+        ds_subset = self.get_ds_subset()
+        
+        try:
+            fig = plt.figure()
+            ax = Axes3D(fig, xlim=[-180, 180], ylim=[-90, 90])
+            ax.set_zlim(bottom=0)
+
+            def concat(iterable): return list(
+                itertools.chain.from_iterable(iterable))
+
+            target_projection = ccrs.PlateCarree()
+
+            feature = cartopy.feature.NaturalEarthFeature(
+                'physical', 'land', '110m')
+            geoms = feature.geometries()
+
+            geoms = [target_projection.project_geometry(geom, feature.crs)
+                     for geom in geoms]
+
+            paths = concat(geos_to_path(geom) for geom in geoms)
+
+            COLOR = False
+            if COLOR:
+                polys = concat(path.to_polygons() for path in paths)
+                lc = PolyCollection(polys, edgecolor='black',
+                                    facecolor='green', closed=False)
+            else:
+                segments = []
+                for path in paths:
+                    vertices = [vertex for vertex, _ in path.iter_segments()]
+                    vertices = np.asarray(vertices)
+                    segments.append(vertices)
+                lc = LineCollection(segments, color='black')
+
+            sc = ax.scatter(
+                ds_subset['lon'].values,
+                ds_subset['lat'].values,
+                ds_subset['vertical'].values,
+                c=ds_subset[selected_var].values,
+                alpha=0.5)
+            plt.colorbar(sc)
+            ax.add_collection3d(lc)
+            ax.add_collection3d(sc)
+
+            ax.set_xlabel('degrees_east')
+            ax.set_ylabel('degrees_north')
+            ax.set_zlabel('Height')
+
+            plt.title("{} Data".format(selected_var.capitalize()))
+            plt.show()
+
+            self.debugContents.append("Scatter Plot 3D of {}".format(
                 selected_var.capitalize()))
         except Exception as e:
             self.debugContents.append("Error: {}".format(str(e)))
@@ -169,6 +254,17 @@ def string_to_float_min(floatString):
         return float(floatString)
     else:
         return -np.Inf
+
+
+def walktree(top):
+    """
+    The function walktree is a Python generator that is used to walk the directory tree.
+    """
+    values = top.groups.values()
+    yield values
+    for value in top.groups.values():
+        for children in walktree(value):
+            yield children
 
 
 if __name__ == '__main__':

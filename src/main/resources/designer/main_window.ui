@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1003</width>
-    <height>544</height>
+    <width>933</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -71,7 +71,51 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="0" column="2">
+     <widget class="QFrame" name="parentGroupFrame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="obsIndexLabel">
+           <property name="text">
+            <string>Observation Index</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="obsIndexInput"/>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="parentGroupLabel">
+         <property name="text">
+          <string>Parent Groups</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QListWidget" name="parentGroupList"/>
+       </item>
+      </layout>
+      <zorder>parentGroupLabel</zorder>
+      <zorder>obsIndexInput</zorder>
+      <zorder>obsIndexLabel</zorder>
+      <zorder>parentGroupList</zorder>
+      <zorder>obsIndexLabel</zorder>
+     </widget>
+    </item>
+    <item row="1" column="0">
      <widget class="QFrame" name="debugFrame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -80,6 +124,9 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="1" column="0">
+        <widget class="QTextBrowser" name="debugContents"/>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="debugLabel">
          <property name="text">
@@ -87,20 +134,68 @@
          </property>
         </widget>
        </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QFrame" name="availableGroupFrame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="2" column="0">
+        <widget class="QListWidget" name="groupContents"/>
+       </item>
        <item row="1" column="0">
-        <widget class="QTextBrowser" name="debugContents"/>
+        <widget class="QLabel" name="groupLabel">
+         <property name="text">
+          <string>Available Groups in Dataset</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Groups</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTextBrowser" name="textBrowser"/>
        </item>
       </layout>
      </widget>
     </item>
    </layout>
+   <zorder>headerFrame</zorder>
+   <zorder>variableFrame</zorder>
+   <zorder>debugFrame</zorder>
+   <zorder>availableGroupFrame</zorder>
+   <zorder>parentGroupFrame</zorder>
+   <zorder>debugLabel</zorder>
+   <zorder>frame</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1003</width>
+     <width>933</width>
      <height>22</height>
     </rect>
    </property>
