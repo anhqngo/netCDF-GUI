@@ -49,24 +49,24 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QFrame" name="variableFrame">
+    <item row="1" column="2">
+     <widget class="QFrame" name="frame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
-        <widget class="QLabel" name="variableLabel">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Variable Contents</string>
+          <string>Dummy</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QListWidget" name="variableList"/>
+        <widget class="QTextBrowser" name="textBrowser"/>
        </item>
       </layout>
      </widget>
@@ -80,21 +80,28 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QLabel" name="obsIndexLabel">
-           <property name="text">
-            <string>Observation Index</string>
-           </property>
-          </widget>
-         </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLineEdit" name="obsIndexInput"/>
          </item>
+         <item>
+          <widget class="QPushButton" name="obsIndexPush">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item row="0" column="0">
+        <widget class="QLabel" name="obsIndexLabel">
+         <property name="text">
+          <string>Observation Index</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QLabel" name="parentGroupLabel">
          <property name="text">
           <string>Parent Groups</string>
@@ -104,15 +111,15 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QListWidget" name="parentGroupList"/>
+       <item row="3" column="0">
+        <widget class="QTextBrowser" name="parentGroupList"/>
        </item>
       </layout>
       <zorder>parentGroupLabel</zorder>
       <zorder>obsIndexInput</zorder>
       <zorder>obsIndexLabel</zorder>
-      <zorder>parentGroupList</zorder>
       <zorder>obsIndexLabel</zorder>
+      <zorder>parentGroupList</zorder>
      </widget>
     </item>
     <item row="1" column="0">
@@ -159,24 +166,24 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QFrame" name="frame">
+    <item row="0" column="1">
+     <widget class="QFrame" name="variableFrame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_7">
+      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="variableLabel">
          <property name="text">
-          <string>Groups</string>
+          <string>Variable Contents</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QTextBrowser" name="textBrowser"/>
+        <widget class="QListWidget" name="variableList"/>
        </item>
       </layout>
      </widget>

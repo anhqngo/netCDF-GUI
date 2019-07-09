@@ -32,7 +32,7 @@ import cartopy.crs as ccrs
 
 
 TEST = 0
-TEST_FILE = "/Users/jngo/netCDF-GUI/tests/datasets/ds_1_point.nc"
+TEST_FILE = "/Users/jngo/netCDF-GUI/tests/datasets/proposed_standard/salinity_4.nc"
 
 
 class AppContext(ApplicationContext):
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.ctx = ctx
-
+        
         self.dialog = SubsetLocationDialog()
 
         self.actionOpen.triggered.connect(self.open_file_dialog)
@@ -65,6 +65,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         version = self.ctx.build_settings['version']
         self.setWindowTitle(
             "DART Plotting Tool v." + version)
+        self.obsIndexPush.clicked.connect(self.show_parent_groups)
 
         if TEST == 1:
             self.debugContents.append("Open file: {}".format(TEST_FILE))
@@ -94,11 +95,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.variableList.addItems(list(self.ds.data_vars))
         self.variableList.itemDoubleClicked.connect(self.show_item)
 
-        groupList = []
+        self.groupList = []
         for children in walktree(self.rootgrp):
             for child in children:
-                groupList.append(child.name)
-        self.groupContents.addItems(groupList)
+                self.groupList.append(child.name)
+        self.groupContents.addItems(self.groupList)
 
     def show_item(self, item):
         selected_var = item.text()
@@ -106,8 +107,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scatter_plot(selected_var)
         self.scatter_plot_3d(selected_var)
 
-    def show_parent_groups(self, obs_index):
-        pass
+    def show_parent_groups(self):
+        try:
+            obs_index = int(self.obsIndexInput.text())
+        except:
+            print("Must be an integer")
+        print(obs_index)
+        self.ds = xr.open_dataset(TEST_FILE, decode_times=False)
+        _list_of_groups = self.ds['list_of_groups'].values[obs_index]
+        _list_of_groups = np.where(_list_of_groups>=0)[0]
+        self.parentGroupList.setText("")
+        if len(_list_of_groups) == 0:
+            self.parentGroupList.setText("No groups available")
+        else:
+            for groupIndex in _list_of_groups:
+                if groupIndex < 0:
+                    continue
+                print(groupIndex)
+                self.parentGroupList.append(self.groupList[groupIndex])
 
     def scatter_plot(self, selected_var):
         """
@@ -124,7 +141,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # sc = plt.scatter(self.ds['lon'].values, self.ds['lat'].values,
             #                  c=self.ds[selected_var].values)
             sc = plt.scatter(ds_subset['lon'].values, ds_subset['lat'].values,
-                             c=ds_subset[selected_var].values)
+                             c=ds_subset[selected_var].values.T[0])
 
             plt.colorbar(sc)
 
@@ -184,7 +201,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ds_subset['lon'].values,
                 ds_subset['lat'].values,
                 ds_subset['vertical'].values,
-                c=ds_subset[selected_var].values,
+                c=ds_subset[selected_var].values.T[0],
                 alpha=0.5)
             plt.colorbar(sc)
             ax.add_collection3d(lc)
