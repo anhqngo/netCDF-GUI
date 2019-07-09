@@ -9,7 +9,7 @@ from fbs_runtime.application_context.PyQt5 import ApplicationContext, cached_pro
 
 # UI Classes
 from ui.main_window import Ui_MainWindow
-from ui.subset_location_dialog import Ui_subset_location_dialog
+from ui.subset_dialog import Ui_subset_dialog
 
 # NetCDF packages
 import xarray as xr
@@ -45,7 +45,7 @@ class AppContext(ApplicationContext):
         return MainWindow(self)
 
 
-class SubsetLocationDialog(QDialog, Ui_subset_location_dialog):
+class SubsetLocationDialog(QDialog, Ui_subset_dialog):
     def __init__(self):
         super(SubsetLocationDialog, self).__init__()
         self.setupUi(self)
