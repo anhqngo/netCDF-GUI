@@ -57,7 +57,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.ctx = ctx
-        
+
         self.dialog = SubsetLocationDialog()
 
         self.actionOpen.triggered.connect(self.open_file_dialog)
@@ -93,61 +93,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.headerContents.setText(
             "File name: {}".format(fileName) + "\n" + str(self.ds))
         self.variableList.addItems(list(self.ds.data_vars))
-        self.variableList.itemDoubleClicked.connect(self.show_item)
-
+        self.variableList.itemDoubleClicked.connect(self.show_variable)
+        self.groupContents.itemDoubleClicked.connect(
+            self.plot_obseravtions_in_group)
         self.groupList = []
         for children in walktree(self.rootgrp):
             for child in children:
                 self.groupList.append(child.name)
         self.groupContents.addItems(self.groupList)
 
-    def show_item(self, item):
+    def show_variable(self, item):
         selected_var = item.text()
         self.debugContents.append("Selected variable: {}".format(selected_var))
-        self.scatter_plot(selected_var)
-        self.scatter_plot_3d(selected_var)
+        temp_ds = self.get_ds_subset()
+        self.scatter_plot_2d(selected_var, temp_ds)
+        self.scatter_plot_3d(selected_var, temp_ds)
 
-    def show_parent_groups(self):
-        try:
-            obs_index = int(self.obsIndexInput.text())
-        except:
-            print("Must be an integer")
-        print(obs_index)
-        self.ds = xr.open_dataset(TEST_FILE, decode_times=False)
-        _list_of_groups = self.ds['list_of_groups'].values[obs_index]
-        _list_of_groups = np.where(_list_of_groups>=0)[0]
-        self.parentGroupList.setText("")
-        if len(_list_of_groups) == 0:
-            self.parentGroupList.setText("No groups available")
-        else:
-            for groupIndex in _list_of_groups:
-                if groupIndex < 0:
-                    continue
-                print(groupIndex)
-                self.parentGroupList.append(self.groupList[groupIndex])
-
-    def scatter_plot(self, selected_var):
-        """
-        Display a basic geo scatter plot of observation data
-        """
-
-        self.debugContents.append("Processing scatter plot 2D...")
-        ds_subset = self.get_ds_subset()
+    def plot_obseravtions_in_group(self, item):
+        print(item.text())
+        self.debugContents.append(
+            "Processing scatter plot 2D of group {}".format(
+                item.text()))
+        selected_var = 'observations'
+        ds_subset = self.ds
+        index_array = self.rootgrp['/{}/obs_id'.format(
+            item.text())][:].compressed()
 
         try:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
             ax.stock_img()
-            # sc = plt.scatter(self.ds['lon'].values, self.ds['lat'].values,
-            #                  c=self.ds[selected_var].values)
-            sc = plt.scatter(ds_subset['lon'].values, ds_subset['lat'].values,
-                             c=ds_subset[selected_var].values.T[0])
+            sc = plt.scatter(
+                ds_subset['lon'].values[index_array],
+                ds_subset['lat'].values[index_array],
+                c=ds_subset[selected_var].values.T[0][index_array],
+                s=1)
 
             plt.colorbar(sc)
-
-            # TODO: the following two lines don't seem to do anything
-            plt.xlabel("X Label")
-            plt.ylabel("Y label")
 
             plt.title("{} Data".format(selected_var.capitalize()))
             plt.show()
@@ -157,13 +139,59 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.debugContents.append("Error: {}".format(str(e)))
 
-    def scatter_plot_3d(self, selected_var):
+    def show_parent_groups(self):
+        try:
+            obs_index = int(self.obsIndexInput.text())
+        except BaseException:
+            self.debugContents.append("Must be an integer")
+        self.ds = xr.open_dataset(TEST_FILE, decode_times=False)
+        _list_of_groups = self.ds['list_of_groups'].values[obs_index]
+
+        # The following line makes sure that we only take valid indices, for
+        # the default fill_in value is in the 200 thoudands. If we didn't implement
+        # this line, we would run into index out of range error.
+        _list_of_groups = np.where(_list_of_groups >= 0)[0]
+        self.parentGroupList.setText("")
+        if len(_list_of_groups) == 0:
+            self.parentGroupList.setText("No groups available")
+        else:
+            for groupIndex in _list_of_groups:
+                if groupIndex < 0:
+                    continue
+                self.parentGroupList.append(self.groupList[groupIndex])
+
+    def scatter_plot_2d(self, selected_var, dataset):
+        """
+        Display a basic geo scatter plot of observation data
+        """
+
+        self.debugContents.append("Processing scatter plot 2D...")
+        ds_subset = dataset
+
+        try:
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+            ax.stock_img()
+            sc = plt.scatter(ds_subset['lon'].values, ds_subset['lat'].values,
+                             c=ds_subset[selected_var].values.T[0], s=1)
+
+            plt.colorbar(sc)
+
+            plt.title("{} Data".format(selected_var.capitalize()))
+            plt.show()
+            self.debugContents.append("Scatter Plot of {}".format(
+                selected_var.capitalize()))
+
+        except Exception as e:
+            self.debugContents.append("Error: {}".format(str(e)))
+
+    def scatter_plot_3d(self, selected_var, dataset):
         """
         Display 3D scatter plot of selected variable
         """
 
         self.debugContents.append("Processing scatter plot 3D...")
-        ds_subset = self.get_ds_subset()
+        ds_subset = dataset
 
         try:
             fig = plt.figure()
@@ -201,7 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ds_subset['lon'].values,
                 ds_subset['lat'].values,
                 ds_subset['vertical'].values,
-                c=ds_subset[selected_var].values.T[0],
+                c=ds_subset[selected_var].values.T[0], s=1,
                 alpha=0.5)
             plt.colorbar(sc)
             ax.add_collection3d(lc)
@@ -219,12 +247,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.debugContents.append("Error: {}".format(str(e)))
 
-    def get_observation_type(self):
-        pass
-        # TODO: rewrite the function
-
     def get_ds_subset(self):
-        # self.dialog = SubsetLocationDialog()
         self.dialog.exec_()
 
         # TODO: make the code below more compact
