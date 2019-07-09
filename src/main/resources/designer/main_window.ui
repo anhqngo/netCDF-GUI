@@ -167,7 +167,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QFormLayout" name="formLayout_2">
+      <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -204,7 +204,6 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
    </widget>
    <widget class="QMenu" name="menuPlot">
     <property name="title">

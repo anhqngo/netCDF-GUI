@@ -61,8 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dialog = SubsetLocationDialog()
 
         self.actionOpen.triggered.connect(self.open_file_dialog)
-        self.actionSave.triggered.connect(self.get_ds_subset)
-        # TODO: connect to the right slot
+
         version = self.ctx.build_settings['version']
         self.setWindowTitle(
             "DART Plotting Tool v." + version)
@@ -82,17 +81,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.read_file(fileName)
         else:
             self.debugContents.append("Cannot open file")
-
-    def save_file_dialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(
-            self, "QFileDialog.getSaveFileName()", "",
-            "All Files (*);;Text Files (*.txt)", options=options)
-        if fileName:
-            self.debugContents.append("Save file: {}".format(fileName))
-        # TODO: do somethign with the save file function. It might not be
-        # needed
 
     def read_file(self, fileName):
         """
@@ -118,14 +106,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scatter_plot(selected_var)
         self.scatter_plot_3d(selected_var)
 
+    def show_parent_groups(self, obs_index):
+        pass
+
     def scatter_plot(self, selected_var):
         """
         Display a basic geo scatter plot of observation data
         """
 
-        self.debugContents.append("Processing scatter plot 2D")
+        self.debugContents.append("Processing scatter plot 2D...")
         ds_subset = self.get_ds_subset()
-        
+
         try:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
@@ -145,7 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plt.show()
             self.debugContents.append("Scatter Plot of {}".format(
                 selected_var.capitalize()))
-        
+
         except Exception as e:
             self.debugContents.append("Error: {}".format(str(e)))
 
@@ -154,9 +145,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Display 3D scatter plot of selected variable
         """
 
-        self.debugContents.append("Processing scatter plot 3D")
+        self.debugContents.append("Processing scatter plot 3D...")
         ds_subset = self.get_ds_subset()
-        
+
         try:
             fig = plt.figure()
             ax = Axes3D(fig, xlim=[-180, 180], ylim=[-90, 90])
@@ -176,7 +167,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             paths = concat(geos_to_path(geom) for geom in geoms)
 
-            COLOR = False
+            COLOR = True
             if COLOR:
                 polys = concat(path.to_polygons() for path in paths)
                 lc = PolyCollection(polys, edgecolor='black',
