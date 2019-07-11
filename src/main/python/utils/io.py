@@ -1,6 +1,7 @@
 """This module contains helper functions for reading/writing netCDF files
 """
 
+
 def walktree(top):
     """
     The function walktree is a Python generator that is used to walk the directory tree
