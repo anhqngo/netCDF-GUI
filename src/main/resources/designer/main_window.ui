@@ -20,7 +20,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>netCDF Plotting GUI</string>
+   <string>DART Viewer</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -59,14 +59,11 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QPushButton" name="plotButton">
          <property name="text">
-          <string>Dummy</string>
+          <string>Plot</string>
          </property>
         </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTextBrowser" name="textBrowser"/>
        </item>
       </layout>
      </widget>
@@ -116,8 +113,6 @@
        </item>
       </layout>
       <zorder>parentGroupLabel</zorder>
-      <zorder>obsIndexInput</zorder>
-      <zorder>obsIndexLabel</zorder>
       <zorder>obsIndexLabel</zorder>
       <zorder>parentGroupList</zorder>
      </widget>
@@ -194,7 +189,6 @@
    <zorder>debugFrame</zorder>
    <zorder>availableGroupFrame</zorder>
    <zorder>parentGroupFrame</zorder>
-   <zorder>debugLabel</zorder>
    <zorder>frame</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -224,6 +218,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
     <addaction name="actionView_Documentation"/>
    </widget>
    <addaction name="menuFile"/>
@@ -269,6 +264,11 @@
   <action name="actionView_Documentation">
    <property name="text">
     <string>View Documentation</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About DART Viewer</string>
    </property>
   </action>
  </widget>
