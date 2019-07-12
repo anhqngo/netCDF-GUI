@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection, PolyCollection
 from mpl_toolkits.mplot3d import Axes3D
 
+import seaborn as sns
 
 import cartopy.feature
 from cartopy.mpl.patch import geos_to_path
@@ -22,6 +23,7 @@ def geo_3d_plot(dataset, variable, obs_index_array):
     Display 3D scatter plot of a variable within a specific group in a dataset
     """
     fig = plt.figure()
+    sns.set()
     ax = Axes3D(fig, xlim=[-180, 180], ylim=[-90, 90])
     ax.set_zlim(bottom=0)
 
@@ -35,8 +37,8 @@ def geo_3d_plot(dataset, variable, obs_index_array):
              for geom in geoms]
     paths = concat(geos_to_path(geom) for geom in geoms)
 
-    COLOR = False
-    if COLOR:
+    color = True
+    if color:
         polys = concat(path.to_polygons() for path in paths)
         lc = PolyCollection(polys, edgecolor='black',
                             facecolor='green', closed=False)
@@ -69,6 +71,8 @@ def geo_3d_plot(dataset, variable, obs_index_array):
 
 
 def time_series_qc_plot(dataset, obs_index_array):
+    """Display time series of quality control
+    """
     dataset = xr.decode_cf(dataset, decode_times=True)
     fig = plt.figure(
         num=None,
@@ -78,15 +82,25 @@ def time_series_qc_plot(dataset, obs_index_array):
         dpi=80,
         facecolor='w',
         edgecolor='k')
+    sns.set()
     # Filter out invalid qc values:
     temp = dataset.where(8 > dataset['qc'], drop=True)
-    plt.plot_date(x=temp['time'], y=temp['qc'].values, xdate=True,
+    plt.plot_date(x=temp['time'], xdate=True,
+                  y=temp['qc'].values,
                   markerfacecolor="None", ms=5, alpha=0.05)
     plt.title("QC Values Time Series")
     plt.ylabel("QC Values")
     plt.xlabel("Time")
+    plt.ylim(-0.1, 7.1)
     plt.show()
 
 
-def qc_observations_plot(dataset, variable, obs_index_array):
-    pass
+def qc_observations_plot(ds, variable, obs_index_array):
+    plt.figure(figsize=(4, 3))
+    sns.set()
+    temp = ds.where(8 > ds['qc'], drop=True)
+    sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
+    plt.title("Distribution of DART Quality Control Values")
+    plt.xlabel('Number of Observations')
+    plt.ylabel('DART QC Values')
+    plt.show()

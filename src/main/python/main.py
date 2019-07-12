@@ -177,7 +177,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return: list of observation indices in that group
         :rtype: np.array
         """
-        # selected_group = self.groupContents.itemClicked().text()
         if selected_group == "root":
             return self.dataset['obs'].values
         else:
@@ -191,6 +190,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         geo_3d_plot(dataset, variable, obs_index_array)
         time_series_qc_plot(dataset, obs_index_array)
+        qc_observations_plot(dataset, variable, obs_index_array)
 
 
 class SubsetDialog(QDialog, Ui_subset_dialog):
