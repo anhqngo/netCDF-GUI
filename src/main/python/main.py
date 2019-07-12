@@ -19,7 +19,7 @@ from fbs_runtime.application_context.PyQt5 import (
 from ui.main_window import Ui_MainWindow
 from ui.subset_dialog import Ui_subset_dialog
 from utils.io import walktree
-from utils.plot import geo_3d_plot
+from utils.plot import geo_3d_plot, time_series_qc_plot, qc_observations_plot
 
 
 class AppContext(ApplicationContext):
@@ -60,12 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.variableList.itemClicked.connect(self.get_var_selection)
         self.groupContents.itemClicked.connect(self.get_group_selection)
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
-
-        self.plotButton.clicked.connect(
-            lambda: geo_3d_plot(
-                self.dataset_subset,
-                self.current_selected_var,
-                self.get_obs_index_array(self.current_selected_group)))
+        self.plotButton.clicked.connect(self.master_plot)
 
     def get_var_selection(self):
         """Get variable selection from user input
@@ -74,7 +69,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :rtype: string
         """
         self.current_selected_var = self.variableList.currentItem().text()
-        print(self.current_selected_var)
         return self.current_selected_var
 
     def get_group_selection(self):
@@ -84,7 +78,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :rtype: string
         """
         self.current_selected_group = self.groupContents.currentItem().text()
-        print(self.current_selected_group)
         return self.current_selected_group
 
     def open_file_dialog(self):
@@ -190,6 +183,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             return self.root_group['/{}/obs_id'.format(
                 selected_group)][:].compressed()
+
+    def master_plot(self):
+        dataset = self.dataset_subset
+        variable = self.current_selected_var
+        obs_index_array = self.get_obs_index_array(self.current_selected_group)
+
+        geo_3d_plot(dataset, variable, obs_index_array)
+        time_series_qc_plot(dataset, obs_index_array)
 
 
 class SubsetDialog(QDialog, Ui_subset_dialog):

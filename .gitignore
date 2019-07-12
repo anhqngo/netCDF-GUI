@@ -17,14 +17,12 @@ env/
 .DS_Store
 
 # netCDF CDF Files
-**.cdl
+*.cdl
+*.nc
 
 # Jupyter Notebook files
 .ipynb_checkpoints
 tests/jupyter_tests/
 
-# netCDF files
-*.nc
-
-# Manual scripts
+# Other
 format.sh

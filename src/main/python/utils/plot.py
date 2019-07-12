@@ -4,6 +4,7 @@ The features include: scatter plot 3D, time series plot, and DART QC plot.
 
 import itertools
 import numpy as np
+import xarray as xr
 
 # Plotting library imports
 import matplotlib.pyplot as plt
@@ -65,3 +66,27 @@ def geo_3d_plot(dataset, variable, obs_index_array):
     ax.set_zlabel('Height')
     plt.title("{} Data".format(variable.capitalize()))
     plt.show()
+
+
+def time_series_qc_plot(dataset, obs_index_array):
+    dataset = xr.decode_cf(dataset, decode_times=True)
+    fig = plt.figure(
+        num=None,
+        figsize=(
+            8,
+            6),
+        dpi=80,
+        facecolor='w',
+        edgecolor='k')
+    # Filter out invalid qc values:
+    temp = dataset.where(8 > dataset['qc'], drop=True)
+    plt.plot_date(x=temp['time'], y=temp['qc'].values, xdate=True,
+                  markerfacecolor="None", ms=5, alpha=0.05)
+    plt.title("QC Values Time Series")
+    plt.ylabel("QC Values")
+    plt.xlabel("Time")
+    plt.show()
+
+
+def qc_observations_plot(dataset, variable, obs_index_array):
+    pass
