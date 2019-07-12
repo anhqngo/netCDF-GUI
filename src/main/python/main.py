@@ -4,6 +4,7 @@
 # Standard library imports
 import sys
 import numpy as np
+import os
 
 # NetCDF library imports
 import xarray as xr
@@ -56,21 +57,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """This function connects pre-existing signals with the correct slots
         """
         self.actionOpen.triggered.connect(self.open_file_dialog)
+        self.variableList.itemClicked.connect(self.get_var_selection)
+        self.groupContents.itemClicked.connect(self.get_group_selection)
+        self.obsIndexPush.clicked.connect(self.show_parent_groups)
+
         self.plotButton.clicked.connect(
             lambda: geo_3d_plot(
                 self.dataset_subset,
-                "observations",
-                np.arange(2323)))
-        self.obsIndexPush.clicked.connect(self.show_parent_groups)
+                self.current_selected_var,
+                self.get_obs_index_array(self.current_selected_group)))
+
+    def get_var_selection(self):
+        """Get variable selection from user input
+
+        :return: variable name
+        :rtype: string
+        """
+        self.current_selected_var = self.variableList.currentItem().text()
+        print(self.current_selected_var)
+        return self.current_selected_var
+
+    def get_group_selection(self):
+        """Get group selection from user input
+
+        :return: group name
+        :rtype: string
+        """
+        self.current_selected_group = self.groupContents.currentItem().text()
+        print(self.current_selected_group)
+        return self.current_selected_group
 
     def open_file_dialog(self):
         """Open a dialog for user to chose their dataset
         """
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        dataset_path, _ = QFileDialog.getOpenFileName(
-            self, "Open NetCDF File", "",
-            "NetCDF Files (*.nc);;All Files (*)", options=options)
+        try:
+            if os.environ['DEBUG'] == "true":
+                dataset_path = os.environ['TEST_FILE']
+        except BaseException:
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            dataset_path, _ = QFileDialog.getOpenFileName(
+                self, "Open NetCDF File", "",
+                "NetCDF Files (*.nc);;All Files (*)", options=options)
         try:
             self.debugContents.append("Open file: {}".format(dataset_path))
             self.dataset = xr.open_dataset(dataset_path, decode_times=False)
@@ -147,7 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             lon_min <= ds_temp.coords['lon'], drop=True)
         return ds_temp
 
-    def get_obs_index_array(self):
+    def get_obs_index_array(self, selected_group):
         """Given a group from user input, this function returns the list of
         observation indices in that group
 
@@ -156,7 +184,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return: list of observation indices in that group
         :rtype: np.array
         """
-        selected_group = self.groupContents.itemClicked().text()
+        # selected_group = self.groupContents.itemClicked().text()
         if selected_group == "root":
             return self.dataset['obs'].values
         else:
