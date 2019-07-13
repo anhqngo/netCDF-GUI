@@ -18,7 +18,7 @@ from cartopy.mpl.patch import geos_to_path
 import cartopy.crs as ccrs
 
 
-def geo_3d_plot(dataset, variable, obs_index_array):
+def geo_3d_plot(dataset, variable):
     """
     Display 3D scatter plot of a variable within a specific group in a dataset
     """
@@ -52,10 +52,10 @@ def geo_3d_plot(dataset, variable, obs_index_array):
     ax.add_collection3d(lc)
 
     sc = ax.scatter(
-        dataset['lon'].values[obs_index_array],
-        dataset['lat'].values[obs_index_array],
-        dataset['vertical'].values[obs_index_array],
-        c=dataset[variable].values.T[0][obs_index_array],
+        dataset['lon'].values,
+        dataset['lat'].values,
+        dataset['vertical'].values,
+        c=dataset[variable].values.T[0],
         s=1,
         alpha=0.5)
     plt.colorbar(sc)
@@ -70,7 +70,7 @@ def geo_3d_plot(dataset, variable, obs_index_array):
     plt.show()
 
 
-def time_series_qc_plot(dataset, obs_index_array):
+def time_series_qc_plot(dataset):
     """Display time series of quality control
     """
     dataset = xr.decode_cf(dataset, decode_times=True)
@@ -95,11 +95,14 @@ def time_series_qc_plot(dataset, obs_index_array):
     plt.show()
 
 
-def qc_observations_plot(ds, variable, obs_index_array):
+def qc_observations_plot(ds):
     plt.figure(figsize=(4, 3))
     sns.set()
     temp = ds.where(8 > ds['qc'], drop=True)
-    sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
+    try:
+        sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
+    except ValueError:
+        sns.countplot(y=temp['qc'].values, order=[7, 6, 5, 4, 3, 2, 1, 0])
     plt.title("Distribution of DART Quality Control Values")
     plt.xlabel('Number of Observations')
     plt.ylabel('DART QC Values')

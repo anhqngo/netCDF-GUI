@@ -3,8 +3,8 @@
 
 # Standard library imports
 import sys
-import numpy as np
 import os
+import numpy as np
 
 # NetCDF library imports
 import xarray as xr
@@ -57,28 +57,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """This function connects pre-existing signals with the correct slots
         """
         self.actionOpen.triggered.connect(self.open_file_dialog)
-        self.variableList.itemClicked.connect(self.get_var_selection)
-        self.groupContents.itemClicked.connect(self.get_group_selection)
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
         self.plotButton.clicked.connect(self.master_plot)
-
-    def get_var_selection(self):
-        """Get variable selection from user input
-
-        :return: variable name
-        :rtype: string
-        """
-        self.current_selected_var = self.variableList.currentItem().text()
-        return self.current_selected_var
-
-    def get_group_selection(self):
-        """Get group selection from user input
-
-        :return: group name
-        :rtype: string
-        """
-        self.current_selected_group = self.groupContents.currentItem().text()
-        return self.current_selected_group
 
     def open_file_dialog(self):
         """Open a dialog for user to chose their dataset
@@ -86,7 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             if os.environ['DEBUG'] == "true":
                 dataset_path = os.environ['TEST_FILE']
-        except BaseException:
+        except KeyError:
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             dataset_path, _ = QFileDialog.getOpenFileName(
@@ -134,10 +114,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except ValueError:
             self.parentGroupList.append("Must be an integer")
 
-    @cached_property
-    def dataset_subset(self):
+    def get_selected_var(self):
+        """Get variable selection from user input
+
+        :return: variable name
+        :rtype: string
+        """
+        return self.variableList.currentItem().text()
+
+    def get_selected_group(self):
+        """Get group selection from user input
+
+        :return: group name
+        :rtype: string
+        """
+        return self.groupContents.currentItem().text()
+
+    def get_dataset_subset(self):
         """Displays the subset dialog, takes user input, and returns the new
-        dataset
+        dataset subset
 
         :param dataset: the original dataset
         :type dataset: xr.Dataset
@@ -146,51 +141,99 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         self.subset_dialog.exec_()
 
-        (lon_max_input,
-         lat_max_input,
-         lon_min_input,
-         lat_min_input) = (self.subset_dialog.lon_max_input.text(),
-                           self.subset_dialog.lat_max_input.text(),
-                           self.subset_dialog.lon_min_input.text(),
-                           self.subset_dialog.lat_min_input.text())
-        lon_max = float(lon_max_input) if lon_max_input else np.Inf
-        lon_min = float(lon_min_input) if lon_min_input else -np.Inf
-        lat_max = float(lat_max_input) if lat_max_input else np.Inf
-        lat_min = float(lat_min_input) if lat_min_input else -np.Inf
+        def subset_group(dataset):
+            """[summary]
 
-        ds_temp = self.dataset.where(
-            lat_max >= self.dataset.coords['lat'].astype('float'))
-        ds_temp = ds_temp.where(
-            lat_min <= ds_temp.coords['lat'], drop=True)
-        ds_temp = ds_temp.where(
-            lon_max >= ds_temp.coords['lon'], drop=True)
-        ds_temp = ds_temp.where(
-            lon_min <= ds_temp.coords['lon'], drop=True)
-        return ds_temp
+            :param dataset: [description]
+            :type dataset: [type]
+            :return: [description]
+            :rtype: [type]
+            """
+            if self.get_selected_group() == "root":
+                return dataset
+            obs_index_array = self.root_group['/{}/obs_id'.format(
+                self.get_selected_group())][:].compressed()
+            new_dataset = dataset.loc[dict(obs=obs_index_array)]
+            return new_dataset
 
-    def get_obs_index_array(self, selected_group):
-        """Given a group from user input, this function returns the list of
-        observation indices in that group
+        def subset_location(dataset):
+            """Return a new dataset subset based on user's input on location
+            """
+            (lon_max_input,
+             lat_max_input,
+             lon_min_input,
+             lat_min_input) = (self.subset_dialog.lon_max_input.text(),
+                               self.subset_dialog.lat_max_input.text(),
+                               self.subset_dialog.lon_min_input.text(),
+                               self.subset_dialog.lat_min_input.text())
+            lon_max = float(lon_max_input) if lon_max_input else np.Inf
+            lon_min = float(lon_min_input) if lon_min_input else -np.Inf
+            lat_max = float(lat_max_input) if lat_max_input else np.Inf
+            lat_min = float(lat_min_input) if lat_min_input else -np.Inf
 
-        :param selected_group: user selected group from a list of groups
-        :type selected_group: string
-        :return: list of observation indices in that group
-        :rtype: np.array
-        """
-        if selected_group == "root":
-            return self.dataset['obs'].values
-        else:
-            return self.root_group['/{}/obs_id'.format(
-                selected_group)][:].compressed()
+            dataset = dataset.where(
+                lat_max >= dataset.coords['lat'], drop=True)
+            dataset = dataset.where(
+                lat_min <= dataset.coords['lat'], drop=True)
+            dataset = dataset.where(
+                lon_max >= dataset.coords['lon'], drop=True)
+            dataset = dataset.where(
+                lon_min <= dataset.coords['lon'], drop=True)
+
+            return dataset
+
+        def subset_time(dataset):
+            """Return a new dataset subset based on user's input on time
+            """
+
+            return dataset
+
+        def subset_qc(dataset):
+            """Return a new dataset subset based on user's input on qc values
+            """
+            list_of_unchecked_checkboxes = []
+            list_of_checkboxes = [self.subset_dialog.qc_checkbox_0,
+                                  self.subset_dialog.qc_checkbox_1,
+                                  self.subset_dialog.qc_checkbox_2,
+                                  self.subset_dialog.qc_checkbox_3,
+                                  self.subset_dialog.qc_checkbox_4,
+                                  self.subset_dialog.qc_checkbox_5,
+                                  self.subset_dialog.qc_checkbox_6,
+                                  self.subset_dialog.qc_checkbox_7,
+                                  self.subset_dialog.qc_checkbox_8]
+            for box in list_of_checkboxes:
+                if not box.isChecked():
+                    list_of_unchecked_checkboxes.append(
+                        list_of_checkboxes.index(box))
+            print(list_of_unchecked_checkboxes)
+
+            if 8 not in list_of_unchecked_checkboxes:
+                return dataset
+
+            for i in list_of_unchecked_checkboxes:
+                dataset = dataset.where(i != dataset['qc'], drop=True)
+            try:
+                dataset = dataset.squeeze('qc_copy')
+            # TODO: fix the following
+            except BaseException:
+                print("Im not sure what to do")
+            return dataset
+
+        return subset_time(
+            subset_qc(
+                subset_location(
+                    subset_group(
+                        self.dataset))))
 
     def master_plot(self):
-        dataset = self.dataset_subset
-        variable = self.current_selected_var
-        obs_index_array = self.get_obs_index_array(self.current_selected_group)
+        """Generate all the necessary plots for a single netCDF file
+        """
+        dataset = self.get_dataset_subset()
+        variable = self.get_selected_var()
 
-        geo_3d_plot(dataset, variable, obs_index_array)
-        time_series_qc_plot(dataset, obs_index_array)
-        qc_observations_plot(dataset, variable, obs_index_array)
+        geo_3d_plot(dataset, variable)
+        time_series_qc_plot(dataset)
+        qc_observations_plot(dataset, variable)
 
 
 class SubsetDialog(QDialog, Ui_subset_dialog):
