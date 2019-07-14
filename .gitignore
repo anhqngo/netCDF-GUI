@@ -26,3 +26,8 @@ tests/jupyter_tests/
 
 # Other
 format.sh
+matlab_settings.m
+random.txt
+
+# Sphinx build
+docs/
