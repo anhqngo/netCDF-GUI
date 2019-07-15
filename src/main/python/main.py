@@ -266,7 +266,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 dataset = dataset.squeeze('qc_copy')
             except BaseException:
-                # TODO: fix me
+                # TODO: The varible qc has qc_copy x obs dinension. Therefore,
+                # when we use dataset.where with qc variable, the qc_copy
+                # dimension gets pushed to all other variables (play around
+                # with Jupyter Notebook to see this). Therefore, I have to
+                # squeeze the dataset (i.e. remove that dimension). If the
+                # squeezing fails for some reason (potentially because there
+                # are more than one qc_copy values), then I honestly do not
+                # know what to do.
                 print("Im not sure what to do")
             return dataset
 

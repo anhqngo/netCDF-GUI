@@ -4,7 +4,6 @@ The features include: scatter plot 3D, time series plot, and DART QC plot.
 
 import itertools
 import numpy as np
-import xarray as xr
 
 # Plotting library imports
 import matplotlib.pyplot as plt
@@ -43,28 +42,41 @@ def geo_3d_plot(dataset, variable):
     color = True
     if color:
         polys = concat(path.to_polygons() for path in paths)
-        lc = PolyCollection(polys, edgecolor='black',
-                            facecolor='green', closed=False)
+        line_collection = PolyCollection(polys, edgecolor='black',
+                                         facecolor='green', closed=False)
     else:
         segments = []
         for path in paths:
             vertices = [vertex for vertex, _ in path.iter_segments()]
             vertices = np.asarray(vertices)
             segments.append(vertices)
-        lc = LineCollection(segments, color='black')
-    ax.add_collection3d(lc)
+        line_collection = LineCollection(segments, color='black')
+    ax.add_collection3d(line_collection)
 
-    sc = ax.scatter(
-        dataset['lon'].values,
-        dataset['lat'].values,
-        dataset['vertical'].values,
-        c=dataset[variable].values.T[0],
-        s=1,
-        alpha=0.5)
-    plt.colorbar(sc)
-    ax.add_collection3d(sc)
+    try:
+        scatter_plot = ax.scatter(
+            dataset['lon'].values,
+            dataset['lat'].values,
+            dataset['vertical'].values,
+            c=dataset[variable].values.T[0],
+            s=1,
+            alpha=0.5)
+    except BaseException:
+        # TODO: need to standardize how we store the variables. This case is
+        # only executed if we are plotting 1-D variables. This case won't work
+        # if we decide to implement the obs variable to have (obs x copy)
+        # dimension
+        scatter_plot = ax.scatter(
+            dataset['lon'].values,
+            dataset['lat'].values,
+            dataset['vertical'].values,
+            c=dataset[variable].values,
+            s=1,
+            alpha=0.5)
 
-    # TODO: consider fixing the bounds
+    plt.colorbar(scatter_plot)
+    ax.add_collection3d(scatter_plot)
+
     ax.set_zlim(0, max(dataset['vertical'].values) * 1.5)
     ax.set_xlabel('degrees_east')
     ax.set_ylabel('degrees_north')
@@ -86,7 +98,7 @@ def time_series_qc_plot(dataset):
         edgecolor='k')
     sns.set()
     # Filter out invalid qc values:
-    temp = dataset.where(8 > dataset['qc'], drop=True)
+    temp = dataset.where(dataset['qc'] < 8, drop=True)
     plt.plot_date(x=temp['time'], xdate=True,
                   y=temp['qc'].values,
                   markerfacecolor="None", ms=5, alpha=0.05)
@@ -97,10 +109,15 @@ def time_series_qc_plot(dataset):
     plt.show()
 
 
-def qc_observations_plot(ds):
+def qc_observations_plot(dataset):
+    """Display count of observation corresponding to each qc value
+
+    :param dataset: Dataset returned from main.get_dataset_subset()
+    :type dataset: xarray.Dataset
+    """
     plt.figure(figsize=(4, 3))
     sns.set()
-    temp = ds.where(8 > ds['qc'], drop=True)
+    temp = dataset.where(dataset['qc'] < 8, drop=True)
     try:
         sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
     except KeyError:
