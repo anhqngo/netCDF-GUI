@@ -30,5 +30,14 @@ types of netCDF files, please use other tools like Panoply or IDV.*
 Installation
 ************
 
+Requirements
+============
+- Python 3 and pip
+- PROJ4
+
+
+
+Building
+=========
 Download the binary installation file. Since I do not own a Mac Development
 license, users might need to go to setting and trust to open the applications.
