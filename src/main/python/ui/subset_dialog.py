@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file './src/main/resources/designer/subset_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_subset_dialog(object):
     def setupUi(self, subset_dialog):
@@ -123,4 +125,3 @@ class Ui_subset_dialog(object):
         self.qc_checkbox_5.setText(_translate("subset_dialog", "Not used, not selected in obs_kind_nml"))
         self.qc_checkbox_6.setText(_translate("subset_dialog", "Not used, failed prior QC check"))
         self.qc_checkbox_7.setText(_translate("subset_dialog", "Violated outlier threshold"))
-

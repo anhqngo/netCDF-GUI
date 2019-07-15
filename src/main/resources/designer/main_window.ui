@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1109</width>
-    <height>707</height>
+    <width>933</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -26,177 +26,229 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QFrame" name="headerFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="headerLabel">
-         <property name="text">
-          <string>Header Contents</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTextBrowser" name="headerContents"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="plotButton">
-         <property name="text">
-          <string>Plot</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QFrame" name="parentGroupFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="1" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLineEdit" name="obsIndexInput"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="obsIndexPush">
-           <property name="text">
-            <string>Go</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="obsIndexLabel">
-         <property name="text">
-          <string>Observation Index</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="parentGroupLabel">
-         <property name="text">
-          <string>Parent Groups</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QTextBrowser" name="parentGroupList"/>
-       </item>
-      </layout>
-      <zorder>parentGroupLabel</zorder>
-      <zorder>obsIndexLabel</zorder>
-      <zorder>parentGroupList</zorder>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QFrame" name="debugFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="0">
-        <widget class="QTextBrowser" name="debugContents"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="debugLabel">
-         <property name="text">
-          <string>Debug Broswer</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QFrame" name="availableGroupFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="2" column="0">
-        <widget class="QListWidget" name="groupContents"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="groupLabel">
-         <property name="text">
-          <string>Available Groups in Dataset</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QFrame" name="variableFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="variableLabel">
-         <property name="text">
-          <string>Variable Contents</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QListWidget" name="variableList"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QFrame" name="headerFrame">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>12</y>
+      <width>361</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="headerLabel">
+       <property name="text">
+        <string>Header Contents</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QTextBrowser" name="headerContents">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(244, 255, 245)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QFrame" name="variableFrame">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>10</y>
+      <width>250</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="variableLabel">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>13</y>
+       <width>109</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Variable Contents</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="variableList">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>37</y>
+       <width>224</width>
+       <height>191</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="groupContents">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>262</y>
+       <width>224</width>
+       <height>192</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="groupLabel">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>238</y>
+       <width>167</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Contents</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="plotButton">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>460</y>
+       <width>66</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Plot</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="parentGroupFrame">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>10</y>
+      <width>282</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="obsIndexLabel">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>13</y>
+       <width>251</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Lookup via Observation Index</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="parentGroupLabel">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>80</y>
+       <width>88</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Parent Groups</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="parentGroupList">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>104</y>
+       <width>256</width>
+       <height>121</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="debugLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>236</y>
+       <width>94</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Debug Broswer</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="debugContents">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>260</y>
+       <width>256</width>
+       <height>192</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>37</y>
+       <width>251</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="obsIndexInput"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="obsIndexPush">
+        <property name="text">
+         <string>Find</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <zorder>parentGroupLabel</zorder>
+    <zorder>obsIndexLabel</zorder>
+    <zorder>parentGroupList</zorder>
+    <zorder>debugLabel</zorder>
+    <zorder>debugContents</zorder>
+   </widget>
    <zorder>headerFrame</zorder>
+   <zorder>obsIndexLabel</zorder>
    <zorder>variableFrame</zorder>
-   <zorder>debugFrame</zorder>
-   <zorder>availableGroupFrame</zorder>
    <zorder>parentGroupFrame</zorder>
-   <zorder>frame</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1109</width>
+     <width>933</width>
      <height>22</height>
     </rect>
    </property>
