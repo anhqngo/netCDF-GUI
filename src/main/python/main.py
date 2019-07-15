@@ -53,6 +53,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ctx = ctx
         self.subset_dialog = SubsetDialog()
         self.setup_slots()
+        self.setup_validators()
         self.open_file_dialog()
 
     def setup_slots(self):
@@ -62,6 +63,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
         self.plotButton.clicked.connect(self.master_plot)
 
+    def setup_validators(self):
+        """This function adds value validator for user input field. Users cannot
+        input unspecified values.
+
+        For example, the Regex "[0-9]+" specifies a positive integer.
+        The field will not let users input any other values.
+        """
         self.obsIndexInput.setValidator(
             QRegExpValidator(
                 QRegExp("[0-9]+"),
@@ -85,7 +93,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.root_group = Dataset(dataset_path, "r", format="NETCDF4")
             self.ds_group_list = []
             self.show_dataset_info()
-            self.setup_subset_dialog_ui()
         except OSError:
             self.debugContents.append(
                 "Invalid. Please choose a different file")
@@ -96,10 +103,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables on the GUI
         """
         self.headerContents.setText(str(self.dataset))
+        self.variableList.clear()
         self.variableList.addItems(list(self.dataset.data_vars))
         for children in walktree(self.root_group):
             for child in children:
                 self.ds_group_list.append(child.name)
+        self.groupContents.clear()
         self.groupContents.addItem("root")
         self.groupContents.addItems(self.ds_group_list)
 
@@ -130,8 +139,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         return self.variableList.currentItem().text()
 
+    def get_selected_group(self):
+        """Get group selection from user input
+
+        :return: group name
+        :rtype: string
+        """
+        return self.groupContents.currentItem().text()
+
     def setup_subset_dialog_ui(self):
-        """This function prefilles the min and max values for time array
+        """This function pre-fills the min and max values for time, lat and lon
+        input fields
         """
         time = self.dataset['time'].values
         time_max = max(time)
@@ -141,13 +159,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.subset_dialog.time_min_input.setText(
             np.datetime_as_string(time_min, unit='s'))
 
-    def get_selected_group(self):
-        """Get group selection from user input
+        self.subset_dialog.lon_max_input.setText(
+            str(np.around(max(self.dataset['lon'].values), decimals=2)))
+        self.subset_dialog.lon_min_input.setText(
+            str(np.around(min(self.dataset['lon'].values), decimals=2)))
 
-        :return: group name
-        :rtype: string
-        """
-        return self.groupContents.currentItem().text()
+        self.subset_dialog.lat_max_input.setText(
+            str(np.around(max(self.dataset['lat'].values), decimals=2)))
+        self.subset_dialog.lat_min_input.setText(
+            str(np.around(min(self.dataset['lat'].values), decimals=2)))
 
     def get_dataset_subset(self):
         """Displays the subset dialog, takes user input, and returns the new
@@ -158,6 +178,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return: the new dataset after subsetting
         :rtype: xr.Dataset
         """
+        self.setup_subset_dialog_ui()
         self.subset_dialog.exec_()
 
         def subset_group(dataset):
@@ -244,8 +265,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 dataset = dataset.where(i != dataset['qc'], drop=True)
             try:
                 dataset = dataset.squeeze('qc_copy')
-            # TODO: fix the following
             except BaseException:
+                # TODO: fix me
                 print("Im not sure what to do")
             return dataset
 
@@ -261,9 +282,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dataset = self.get_dataset_subset()
         variable = self.get_selected_var()
 
-        geo_3d_plot(dataset, variable)
-        time_series_qc_plot(dataset)
-        qc_observations_plot(dataset)
+        if dataset['obs'].values.size:
+            geo_3d_plot(dataset, variable)
+            time_series_qc_plot(dataset)
+            qc_observations_plot(dataset)
+        else:
+            self.debugContents.append(
+                "No observation values satisfy user input range")
 
 
 class SubsetDialog(QDialog, Ui_subset_dialog):
