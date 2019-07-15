@@ -30,4 +30,4 @@ matlab_settings.m
 DART_qc_values.txt
 
 # Sphinx build
-docs/
+# docs/
