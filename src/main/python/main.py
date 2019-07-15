@@ -12,6 +12,8 @@ from netCDF4 import Dataset
 
 # PyQt5 library imports
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
 from fbs_runtime.application_context.PyQt5 import (
     ApplicationContext, cached_property)
 
@@ -60,6 +62,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
         self.plotButton.clicked.connect(self.master_plot)
 
+        self.obsIndexInput.setValidator(
+            QRegExpValidator(
+                QRegExp("[0-9]+"),
+                self.obsIndexInput))
+
     def open_file_dialog(self):
         """Open a dialog for user to chose their dataset
         """
@@ -74,10 +81,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 "NetCDF Files (*.nc);;All Files (*)", options=options)
         try:
             self.debugContents.append("Open file: {}".format(dataset_path))
-            self.dataset = xr.open_dataset(dataset_path, decode_times=False)
+            self.dataset = xr.open_dataset(dataset_path, decode_times=True)
             self.root_group = Dataset(dataset_path, "r", format="NETCDF4")
             self.ds_group_list = []
             self.show_dataset_info()
+            self.setup_subset_dialog_ui()
         except OSError:
             self.debugContents.append(
                 "Invalid. Please choose a different file")
@@ -112,7 +120,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.parentGroupList.setText("No groups available")
         except ValueError:
-            self.parentGroupList.append("Must be an integer")
+            self.parentGroupList.append("Input must be an integer")
 
     def get_selected_var(self):
         """Get variable selection from user input
@@ -121,6 +129,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :rtype: string
         """
         return self.variableList.currentItem().text()
+
+    def setup_subset_dialog_ui(self):
+        """This function prefilles the min and max values for time array
+        """
+        time = self.dataset['time'].values
+        time_max = max(time)
+        time_min = min(time)
+        self.subset_dialog.time_max_input.setText(
+            np.datetime_as_string(time_max, unit='s'))
+        self.subset_dialog.time_min_input.setText(
+            np.datetime_as_string(time_min, unit='s'))
 
     def get_selected_group(self):
         """Get group selection from user input
@@ -185,7 +204,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def subset_time(dataset):
             """Return a new dataset subset based on user's input on time
             """
-
+            (time_max_input,
+             time_min_input) = (self.subset_dialog.time_max_input.text(),
+                                self.subset_dialog.time_min_input.text())
+            if time_max_input:
+                time_max_input = np.datetime64(time_max_input)
+                dataset = dataset.where(
+                    time_max_input >= dataset['time'], drop=True)
+            if time_min_input:
+                time_min_input = np.datetime64(time_min_input)
+                dataset = dataset.where(
+                    time_min_input <= dataset['time'], drop=True)
             return dataset
 
         def subset_qc(dataset):
@@ -205,9 +234,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if not box.isChecked():
                     list_of_unchecked_checkboxes.append(
                         list_of_checkboxes.index(box))
-            print(list_of_unchecked_checkboxes)
-
-            if 8 not in list_of_unchecked_checkboxes:
+            # If none of the boxes is checked, then treat it like box "All" is
+            # checked
+            if (len(list_of_unchecked_checkboxes) == 9) or (
+                    8 not in list_of_unchecked_checkboxes):
                 return dataset
 
             for i in list_of_unchecked_checkboxes:
@@ -233,7 +263,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         geo_3d_plot(dataset, variable)
         time_series_qc_plot(dataset)
-        qc_observations_plot(dataset, variable)
+        qc_observations_plot(dataset)
 
 
 class SubsetDialog(QDialog, Ui_subset_dialog):

@@ -17,6 +17,9 @@ import cartopy.feature
 from cartopy.mpl.patch import geos_to_path
 import cartopy.crs as ccrs
 
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
 
 def geo_3d_plot(dataset, variable):
     """
@@ -73,7 +76,6 @@ def geo_3d_plot(dataset, variable):
 def time_series_qc_plot(dataset):
     """Display time series of quality control
     """
-    dataset = xr.decode_cf(dataset, decode_times=True)
     fig = plt.figure(
         num=None,
         figsize=(
@@ -101,7 +103,7 @@ def qc_observations_plot(ds):
     temp = ds.where(8 > ds['qc'], drop=True)
     try:
         sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
-    except ValueError:
+    except KeyError:
         sns.countplot(y=temp['qc'].values, order=[7, 6, 5, 4, 3, 2, 1, 0])
     plt.title("Distribution of DART Quality Control Values")
     plt.xlabel('Number of Observations')
