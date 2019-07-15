@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # IDE files
-.vscode/
+# .vscode/
 .idea/
 
 # fbs installation files
@@ -17,17 +17,17 @@ env/
 .DS_Store
 
 # netCDF CDF Files
-*.cdl
+# *.cdl
 *.nc
 
 # Jupyter Notebook files
 .ipynb_checkpoints
-tests/jupyter_tests/
+# tests/jupyter_tests/
 
 # Other
-format.sh
-matlab_settings.m
-random.txt
+# format.sh
+# matlab_settings.m
+# random.txt
 
 # Sphinx build
-docs/
+# docs/

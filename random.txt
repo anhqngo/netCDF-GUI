@@ -1,0 +1,10 @@
+DART_QC = {
+    0: "Assimilated",
+    1: "Evaluated only",
+    2: "Assimilated but posterior forward operator failed",
+    3: "Evaluated only but posterior forward operator failed",
+    4: "Not used, prior forward operator failed",
+    5: "Not used, not selected in obs_kind_nml",
+    6: "Not used, failed prior QC check",
+    7: "Violated outlier threshold"}
+
