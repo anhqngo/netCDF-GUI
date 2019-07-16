@@ -11,7 +11,7 @@ import xarray as xr
 from netCDF4 import Dataset
 
 # PyQt5 library imports
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QCheckBox
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from fbs_runtime.application_context.PyQt5 import (
@@ -22,6 +22,7 @@ from ui.main_window import Ui_MainWindow
 from ui.subset_dialog import Ui_subset_dialog
 from utils.io import walktree
 from utils.plot import geo_3d_plot, time_series_qc_plot, qc_observations_plot
+from functools import reduce
 
 
 class AppContext(ApplicationContext):
@@ -62,6 +63,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionOpen.triggered.connect(self.open_file_dialog)
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
         self.plotButton.clicked.connect(self.master_plot)
+        # self.plotButton.clicked.connect(self.get_selected_groups)
 
     def setup_validators(self):
         """This function adds value validator for user input field. Users cannot
@@ -91,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.debugContents.append("Open file: {}".format(dataset_path))
             self.dataset = xr.open_dataset(dataset_path, decode_times=True)
             self.root_group = Dataset(dataset_path, "r", format="NETCDF4")
-            self.ds_group_list = []
+            self.ds_group_list = ['root']
             self.show_dataset_info()
         except OSError:
             self.debugContents.append(
@@ -108,28 +110,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for children in walktree(self.root_group):
             for child in children:
                 self.ds_group_list.append(child.name)
-        self.groupContents.clear()
-        self.groupContents.addItem("root")
-        self.groupContents.addItems(self.ds_group_list)
+        # self.groupContents.clear()
+        # self.groupContents.addItems(self.ds_group_list)
+
+        # A dictionary that maps group_name (string) to QCheckbox type
+        self.groupDict = dict()
+        for group in self.ds_group_list:
+            self.groupDict[group] = QCheckBox(self.groupListFrame)
+            self.verticalLayout.addWidget(self.groupDict[group])
+            self.groupDict[group].setObjectName('{}_checkbox'.format(group))
+            self.groupDict[group].setText(group)
 
     def show_parent_groups(self):
         """Display all the groups that an observation is in based on user's
         input of observation index
         """
-        try:
-            obs_index = int(self.obsIndexInput.text())
-            # Only take valid indices from the array:
-            groups = np.where(
-                self.dataset['list_of_groups'].values[obs_index] >= 0)[0]
-            # Reset the textbrowser and get ready to display groups:
-            self.parentGroupList.setText("")
-            if groups.size:
-                for group in groups:
-                    self.parentGroupList.append(self.ds_group_list[group])
-            else:
-                self.parentGroupList.setText("No groups available")
-        except ValueError:
-            self.parentGroupList.append("Input must be an integer")
+        obs_index = int(self.obsIndexInput.text())
+        # Only take valid indices from the array:
+        groups = np.where(
+            self.dataset['list_of_groups'].values[obs_index] >= 0)[0]
+
+        self.parentGroupList.clear()    # reset the text browser
+        if groups.size:
+            for group in groups:
+                # +1 because the first item is rootgroup
+                self.parentGroupList.addItem(self.ds_group_list[group + 1])
+        else:
+            self.parentGroupList.addItem("No groups available")
 
     def get_selected_var(self):
         """Get variable selection from user input
@@ -139,13 +146,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         return self.variableList.currentItem().text()
 
-    def get_selected_group(self):
-        """Get group selection from user input
+    def get_selected_groups(self):
+        list_of_checked = []
+        for checkbox_string in self.groupDict:
+            checkbox = self.groupDict[checkbox_string]
+            if checkbox.isChecked():
+                list_of_checked.append(checkbox_string)
+        print(list_of_checked)
+        return list_of_checked
 
-        :return: group name
-        :rtype: string
-        """
-        return self.groupContents.currentItem().text()
+    # def get_selected_group(self):
+    #     """Get group selection from user input
+
+    #     :return: group name
+    #     :rtype: string
+    #     """
+    #     return self.groupContents.currentItem().text()
 
     def setup_subset_dialog_ui(self):
         """This function pre-fills the min and max values for time, lat and lon
@@ -189,12 +205,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             :return: [description]
             :rtype: [type]
             """
-            if self.get_selected_group() == "root":
+            # TODO: refactor the code below
+
+            if self.and_radioButton.isChecked():
+                checked_group_list = self.get_selected_groups()
+                if len(checked_group_list) == 0:
+                    return dataset
+                if "root" in checked_group_list:
+                    checked_group_list.remove("root")
+
+                test = []
+                for group in checked_group_list:
+                    obs_id_list = self.root_group['/{}/obs_id'.format(
+                        group)][:].compressed()
+                    test.append(obs_id_list)
+
+                from functools import reduce
+                obs_index_array = reduce(np.intersect1d, test)
+                dataset = dataset.loc[dict(obs=obs_index_array)]
                 return dataset
-            obs_index_array = self.root_group['/{}/obs_id'.format(
-                self.get_selected_group())][:].compressed()
-            new_dataset = dataset.loc[dict(obs=obs_index_array)]
-            return new_dataset
+
+            else:
+                checked_group_list = self.get_selected_groups()
+                if "root" in checked_group_list or \
+                        len(checked_group_list) == 0:
+                    return dataset
+
+                obs_index_array = np.array([], dtype=int)
+                for group in checked_group_list:
+                    obs_id_list = self.root_group['/{}/obs_id'.format(
+                        group)][:].compressed()
+                    obs_index_array = np.unique(np.concatenate(
+                        (obs_index_array, obs_id_list), 0))
+
+                dataset = dataset.loc[dict(obs=obs_index_array)]
+                return dataset
 
         def subset_location(dataset):
             """Return a new dataset subset based on user's input on location
@@ -241,7 +286,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def subset_qc(dataset):
             """Return a new dataset subset based on user's input on qc values
             """
-            list_of_unchecked_checkboxes = []
+            list_of_unchecked = []
             list_of_checkboxes = [self.subset_dialog.qc_checkbox_0,
                                   self.subset_dialog.qc_checkbox_1,
                                   self.subset_dialog.qc_checkbox_2,
@@ -253,15 +298,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                   self.subset_dialog.qc_checkbox_8]
             for box in list_of_checkboxes:
                 if not box.isChecked():
-                    list_of_unchecked_checkboxes.append(
+                    list_of_unchecked.append(
                         list_of_checkboxes.index(box))
             # If none of the boxes is checked, then treat it like box "All" is
             # checked
-            if (len(list_of_unchecked_checkboxes) == 9) or (
-                    8 not in list_of_unchecked_checkboxes):
+            if (len(list_of_unchecked) == 9) or (
+                    8 not in list_of_unchecked):
                 return dataset
 
-            for i in list_of_unchecked_checkboxes:
+            for i in list_of_unchecked:
                 dataset = dataset.where(i != dataset['qc'], drop=True)
             try:
                 dataset = dataset.squeeze('qc_copy')
