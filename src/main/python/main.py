@@ -11,7 +11,12 @@ import xarray as xr
 from netCDF4 import Dataset
 
 # PyQt5 library imports
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QCheckBox
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QFileDialog,
+    QDialog,
+    QCheckBox,
+    QErrorMessage)
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from fbs_runtime.application_context.PyQt5 import (
@@ -63,7 +68,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionOpen.triggered.connect(self.open_file_dialog)
         self.obsIndexPush.clicked.connect(self.show_parent_groups)
         self.plotButton.clicked.connect(self.master_plot)
-        # self.plotButton.clicked.connect(self.get_selected_groups)
 
     def setup_validators(self):
         """This function adds value validator for user input field. Users cannot
@@ -110,8 +114,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for children in walktree(self.root_group):
             for child in children:
                 self.ds_group_list.append(child.name)
-        # self.groupContents.clear()
-        # self.groupContents.addItems(self.ds_group_list)
 
         # A dictionary that maps group_name (string) to QCheckbox type
         self.groupDict = dict()
@@ -147,21 +149,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return self.variableList.currentItem().text()
 
     def get_selected_groups(self):
+        """Get group selection from user input
+
+        :return: list of group names
+        :rtype: Python list with type string
+        """
         list_of_checked = []
         for checkbox_string in self.groupDict:
             checkbox = self.groupDict[checkbox_string]
             if checkbox.isChecked():
                 list_of_checked.append(checkbox_string)
-        print(list_of_checked)
         return list_of_checked
-
-    # def get_selected_group(self):
-    #     """Get group selection from user input
-
-    #     :return: group name
-    #     :rtype: string
-    #     """
-    #     return self.groupContents.currentItem().text()
 
     def setup_subset_dialog_ui(self):
         """This function pre-fills the min and max values for time, lat and lon
@@ -205,41 +203,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             :return: [description]
             :rtype: [type]
             """
-            # TODO: refactor the code below
+            checked_group_list = self.get_selected_groups()
+            if len(checked_group_list) == 0:
+                return dataset
+
+            def get_obs_id_list(checked_group_list):
+                """[summary]
+
+                :param checked_group_list: [description]
+                :type checked_group_list: [type]
+                :return: [description]
+                :rtype: [type]
+                """
+                obs_id_list = []
+                for group in checked_group_list:
+                    obs_id = self.root_group['/{}/obs_id'.format(
+                        group)][:].compressed()
+                    obs_id_list.append(obs_id)
+                return obs_id_list
 
             if self.and_radioButton.isChecked():
-                checked_group_list = self.get_selected_groups()
-                if len(checked_group_list) == 0:
-                    return dataset
                 if "root" in checked_group_list:
                     checked_group_list.remove("root")
-
-                test = []
-                for group in checked_group_list:
-                    obs_id_list = self.root_group['/{}/obs_id'.format(
-                        group)][:].compressed()
-                    test.append(obs_id_list)
-
                 from functools import reduce
-                obs_index_array = reduce(np.intersect1d, test)
-                dataset = dataset.loc[dict(obs=obs_index_array)]
-                return dataset
-
+                obs_index_array = reduce(
+                    np.intersect1d, get_obs_id_list(checked_group_list))
             else:
-                checked_group_list = self.get_selected_groups()
-                if "root" in checked_group_list or \
-                        len(checked_group_list) == 0:
+                if "root" in checked_group_list:
                     return dataset
+                obs_index_array = np.unique(np.concatenate(
+                    get_obs_id_list(checked_group_list)))
 
-                obs_index_array = np.array([], dtype=int)
-                for group in checked_group_list:
-                    obs_id_list = self.root_group['/{}/obs_id'.format(
-                        group)][:].compressed()
-                    obs_index_array = np.unique(np.concatenate(
-                        (obs_index_array, obs_id_list), 0))
-
-                dataset = dataset.loc[dict(obs=obs_index_array)]
-                return dataset
+            dataset = dataset.loc[dict(obs=obs_index_array)]
+            return dataset
 
         def subset_location(dataset):
             """Return a new dataset subset based on user's input on location
