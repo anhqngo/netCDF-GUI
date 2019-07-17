@@ -16,7 +16,8 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QDialog,
     QCheckBox,
-    QErrorMessage)
+    QErrorMessage,
+    QMessageBox)
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from fbs_runtime.application_context.PyQt5 import (
@@ -81,6 +82,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QRegExp("[0-9]+"),
                 self.obsIndexInput))
 
+    def show_error_messages(self, error_message):
+        """This function display an error message dialog to the user
+
+        :param error_message: Name of the error that the user is encountering
+        :type error_message: string
+        """
+        error_dialog = QErrorMessage()
+        error_dialog.setWindowTitle("Error")
+        error_dialog.showMessage(error_message)
+        error_dialog.exec_()
+
     def open_file_dialog(self):
         """Open a dialog for user to chose their dataset
         """
@@ -100,8 +112,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ds_group_list = ['root']
             self.show_dataset_info()
         except OSError:
-            self.debugContents.append(
-                "Invalid. Please choose a different file")
+            error_message = "Invalid. Please choose a different file"
+            self.show_error_messages(error_message)
 
     def show_dataset_info(self):
         """
@@ -146,7 +158,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return: variable name
         :rtype: string
         """
-        return self.variableList.currentItem().text()
+        selected_var = self.variableList.currentItem().text()
+        if selected_var:
+            return selected_var
+        else:
+            self.show_error_messages(
+                "Please choose a variable from the list to plot")
 
     def get_selected_groups(self):
         """Get group selection from user input
@@ -223,9 +240,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return obs_id_list
 
             if self.and_radioButton.isChecked():
+                if len(checked_group_list) < 2:
+                    self.show_error_messages("Please select at least 2 groups")
+                    return
                 if "root" in checked_group_list:
                     checked_group_list.remove("root")
                 from functools import reduce
+                print(checked_group_list)
+                print(get_obs_id_list(checked_group_list))
                 obs_index_array = reduce(
                     np.intersect1d, get_obs_id_list(checked_group_list))
             else:
@@ -331,11 +353,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variable = self.get_selected_var()
 
         if dataset['obs'].values.size:
-            geo_3d_plot(dataset, variable)
+            try:
+                geo_3d_plot(dataset, variable)
+            except BaseException:
+                error_message = "Unable to produce plots Geo 3D Plot.\n\
+                    Perhaps the variable that you chose is not compatible"
+                self.show_error_messages(error_message)
             time_series_qc_plot(dataset)
             qc_observations_plot(dataset)
         else:
-            self.debugContents.append(
+            self.show_error_messages(
                 "No observation values satisfy user input range")
 
 
