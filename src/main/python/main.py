@@ -4,6 +4,8 @@
 # Standard library imports
 import sys
 import os
+import re
+from functools import reduce
 import numpy as np
 
 # NetCDF library imports
@@ -16,8 +18,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QDialog,
     QCheckBox,
-    QErrorMessage,
-    QMessageBox)
+    QErrorMessage)
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from fbs_runtime.application_context.PyQt5 import (
@@ -28,7 +29,6 @@ from ui.main_window import Ui_MainWindow
 from ui.subset_dialog import Ui_subset_dialog
 from utils.io import walktree
 from utils.plot import geo_3d_plot, time_series_qc_plot, qc_observations_plot
-from functools import reduce
 
 
 class AppContext(ApplicationContext):
@@ -121,6 +121,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.dataset = xr.open_dataset(dataset_path, decode_times=True)
             self.root_group = Dataset(dataset_path, "r", format="NETCDF4")
             self.ds_group_list = ['root']
+            # A dictionary that maps group_name (str()) to QCheckbox type
+            self.group_dict = dict()
             self.show_dataset_info()
         except OSError:
             error_message = "Invalid. Please choose a different file"
@@ -134,33 +136,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.headerContents.setText(str(self.dataset))
         self.variableList.clear()
         self.variableList.addItems(list(self.dataset.data_vars))
+        ds_group_list_temp = []
         for children in walktree(self.root_group):
             for child in children:
-                self.ds_group_list.append(child.name)
+                ds_group_list_temp.append(child.path)
+        self.ds_group_list += sorted(ds_group_list_temp)
 
-        # A dictionary that maps group_name (str()) to QCheckbox type
-        self.groupDict = dict()
         for group in self.ds_group_list:
-            self.groupDict[group] = QCheckBox(self.groupListFrame)
-            self.verticalLayout.addWidget(self.groupDict[group])
-            self.groupDict[group].setObjectName('{}_checkbox'.format(group))
-            self.groupDict[group].setText(group)
+            self.group_dict[group] = QCheckBox(self.groupListFrame)
+            self.verticalLayout.addWidget(self.group_dict[group])
+            self.group_dict[group].setObjectName('{}_checkbox'.format(group))
+            self.group_dict[group].setText(group)
 
     def show_parent_groups(self):
         """Display all the groups that an observation is in based on user's
         input of observation index
         """
-        obs_index = int(self.obsIndexInput.text())
-        # Only take valid indices from the array:
-        groups = np.where(
-            self.dataset['list_of_groups'].values[obs_index] >= 0)[0]
 
-        self.parentGroupList.clear()    # reset the text browser
-        if groups.size:
-            for group in groups:
-                # +1 because the first item is rootgroup
-                self.parentGroupList.addItem(self.ds_group_list[group + 1])
-        else:
+        obs_index = int(self.obsIndexInput.text())
+        self.parentGroupList.clear()
+
+        for group in self.ds_group_list:
+            try:
+                obs_id = self.root_group['{}/obs_id'.format(
+                    group)][:].compressed()
+                if obs_index == obs_id[np.searchsorted(obs_id, obs_index)]:
+                    self.parentGroupList.addItem(group)
+            except BaseException:
+                continue
+
+        if self.parentGroupList.count() == 0:
             self.parentGroupList.addItem("No groups available")
 
     def get_selected_var(self):
@@ -183,8 +188,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :rtype: Python list with type str()
         """
         list_of_checked = []
-        for checkbox_string in self.groupDict:
-            checkbox = self.groupDict[checkbox_string]
+        for checkbox_string in self.group_dict:
+            checkbox = self.group_dict[checkbox_string]
             if checkbox.isChecked():
                 list_of_checked.append(checkbox_string)
         return list_of_checked
@@ -228,7 +233,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         def subset_group(dataset):
             checked_group_list = self.get_selected_groups()
-            if len(checked_group_list) == 0:
+            if not checked_group_list:
                 return dataset
 
             def get_obs_id_list(checked_group_list):
@@ -242,10 +247,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 """
                 obs_id_list = []
                 for group in checked_group_list:
-                    # TODO: IMPLEMENT GROUPS OF GROUPS
-                    obs_id = self.root_group['/{}/obs_id'.format(
+                    if self.root_group['{}'.format(group)].groups:
+                        new_list = [
+                            x for x in self.ds_group_list if re.search(
+                                r'^{}/+'.format(group), x)]
+                        checked_group_list.remove(group)
+                        checked_group_list += new_list
+                for group in checked_group_list:
+                    obs_id = self.root_group['{}/obs_id'.format(
                         group)][:].compressed()
                     obs_id_list.append(obs_id)
+
                 return obs_id_list
 
             if self.and_radioButton.isChecked():
@@ -254,7 +266,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
                 if "root" in checked_group_list:
                     checked_group_list.remove("root")
-                from functools import reduce
                 obs_index_array = reduce(
                     np.intersect1d, get_obs_id_list(checked_group_list))
             else:
@@ -271,7 +282,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     "No observation values satisfy user input range")
 
         def subset_location(dataset):
-            # TODO: change the code below to check whether the default lon/lat 
+            # TODO: change the code below to check whether the default lon/lat
             # values has been changed or not to avoid unnecessary computations
 
             (lon_max_input,
@@ -342,8 +353,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # If none of the boxes is checked, then treat it like box "All" is
             # checked
-            if (len(list_of_checked) == 0) or (
-                    8 in list_of_checked):
+            if (not list_of_checked) or (8 in list_of_checked):
                 return dataset
 
             obs_index_array = np.concatenate([np.where(dataset['qc'].T[1].values == i)[
