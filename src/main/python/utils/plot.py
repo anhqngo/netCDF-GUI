@@ -53,26 +53,22 @@ def geo_3d_plot(dataset, variable):
         line_collection = LineCollection(segments, color='black')
     ax.add_collection3d(line_collection)
 
-    try:
+    if max(dataset['lon'].values) >= 180:
         scatter_plot = ax.scatter(
-            dataset['lon'].values,
+            dataset['lon'].values - 180,
             dataset['lat'].values,
             dataset['vertical'].values,
-            c=dataset[variable].values.T[0],
+            c=dataset[variable].values,
             s=1,
-            alpha=0.5)
-    except BaseException:
-        # TODO: need to standardize how we store the variables. This case is
-        # only executed if we are plotting 1-D variables. This case won't work
-        # if we decide to implement the obs variable to have (obs x copy)
-        # dimension
+            alpha=0.3)
+    else:
         scatter_plot = ax.scatter(
             dataset['lon'].values,
             dataset['lat'].values,
             dataset['vertical'].values,
             c=dataset[variable].values,
             s=1,
-            alpha=0.5)
+            alpha=0.3)
 
     plt.colorbar(scatter_plot)
     ax.add_collection3d(scatter_plot)
@@ -98,10 +94,10 @@ def time_series_qc_plot(dataset):
         edgecolor='k')
     sns.set()
     # Filter out invalid qc values:
-    temp = dataset.where(dataset['qc'] < 8, drop=True)
+    temp = dataset.where(dataset['qc'].T[1] < 8, drop=True)
     plt.plot_date(x=temp['time'], xdate=True,
-                  y=temp['qc'].values,
-                  markerfacecolor="None", ms=5, alpha=0.05)
+                  y=temp['qc'].T[1].values,
+                  markerfacecolor="None", ms=5, alpha=0.3)
     plt.title("QC Values Time Series")
     plt.ylabel("QC Values")
     plt.xlabel("Time")
@@ -117,11 +113,17 @@ def qc_observations_plot(dataset):
     """
     plt.figure(figsize=(4, 3))
     sns.set()
-    temp = dataset.where(dataset['qc'] < 8, drop=True)
+    temp = dataset.where(dataset['qc'].T[1] < 8, drop=True)
     try:
-        sns.countplot(y=temp['qc'].values.T[0], order=[7, 6, 5, 4, 3, 2, 1, 0])
+        # TODO: change the following to allow users choose which Quality Contorl
+        # they want to use
+        sns.countplot(
+            y=dataset['qc'].T[1].values, order=[
+                7, 6, 5, 4, 3, 2, 1, 0])
     except KeyError:
-        sns.countplot(y=temp['qc'].values, order=[7, 6, 5, 4, 3, 2, 1, 0])
+        sns.countplot(
+            y=dataset['qc'].T[1].values, order=[
+                7, 6, 5, 4, 3, 2, 1, 0])
     plt.title("Distribution of DART Quality Control Values")
     plt.xlabel('Number of Observations')
     plt.ylabel('DART QC Values')

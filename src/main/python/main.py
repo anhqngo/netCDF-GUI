@@ -33,6 +33,10 @@ from functools import reduce
 
 class AppContext(ApplicationContext):
     """This class sets up Application context for fman build
+
+    :param: ApplicationContext
+    :type: fbs_runtime.application_context.PyQt5.ApplicationContext()
+
     """
 
     def run(self):
@@ -41,17 +45,25 @@ class AppContext(ApplicationContext):
 
     @cached_property
     def main_window(self):
-        """Property method to render the main window
+        """This method renders the main window and makes it an attribute of
+        the application context using the `@cached_property`
         """
         main_window = MainWindow(self)
         main_window.setWindowTitle(
-            self.build_settings['app_name'] +
+            self.build_settings['app_name'] + " v." +
             self.build_settings['version'])
         return main_window
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    """This is the main class that renders the main GUI
+    """This class that renders the main window for the GUI
+
+    :param QMainWindow: Default class for main window in PyQt5
+    :type QMainWindow: PyQt5.Widgets.QMainWindow
+    :param Ui_MainWindow: This class is generated from the designer file (.ui)
+    :type Ui_MainWindow: UI_MainWindow
+    :return: None
+    :rtype: None
     """
 
     def __init__(self, ctx):
@@ -74,8 +86,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """This function adds value validator for user input field. Users cannot
         input unspecified values.
 
-        For example, the Regex "[0-9]+" specifies a positive integer.
-        The field will not let users input any other values.
+        For example, one of the fields uses Regex "[0-9]+" as its validator
+        This field will not let users input any non-integer values.
         """
         self.obsIndexInput.setValidator(
             QRegExpValidator(
@@ -86,7 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """This function display an error message dialog to the user
 
         :param error_message: Name of the error that the user is encountering
-        :type error_message: string
+        :type error_message: str
         """
         error_dialog = QErrorMessage()
         error_dialog.setWindowTitle("Error")
@@ -97,7 +109,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Open a dialog for user to chose their dataset
         """
         try:
-            if os.environ['DEBUG'] == "true":
+            if os.environ['DEVELOPMENT'] == "true":
                 dataset_path = os.environ['TEST_FILE']
         except KeyError:
             options = QFileDialog.Options()
@@ -106,7 +118,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self, "Open NetCDF File", "",
                 "NetCDF Files (*.nc);;All Files (*)", options=options)
         try:
-            self.debugContents.append("Open file: {}".format(dataset_path))
             self.dataset = xr.open_dataset(dataset_path, decode_times=True)
             self.root_group = Dataset(dataset_path, "r", format="NETCDF4")
             self.ds_group_list = ['root']
@@ -127,7 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for child in children:
                 self.ds_group_list.append(child.name)
 
-        # A dictionary that maps group_name (string) to QCheckbox type
+        # A dictionary that maps group_name (str()) to QCheckbox type
         self.groupDict = dict()
         for group in self.ds_group_list:
             self.groupDict[group] = QCheckBox(self.groupListFrame)
@@ -156,7 +167,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Get variable selection from user input
 
         :return: variable name
-        :rtype: string
+        :rtype: str()
         """
         selected_var = self.variableList.currentItem().text()
         if selected_var:
@@ -169,7 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Get group selection from user input
 
         :return: list of group names
-        :rtype: Python list with type string
+        :rtype: Python list with type str()
         """
         list_of_checked = []
         for checkbox_string in self.groupDict:
@@ -202,38 +213,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def get_dataset_subset(self):
         """Displays the subset dialog, takes user input, and returns the new
-        dataset subset
+        dataset subset.
+
+        The function is broken down into four helper functions, which helps
+        subset the dataset based on groups, location, time, and QC Values.
 
         :param dataset: the original dataset
-        :type dataset: xr.Dataset
+        :type dataset: xr.Dataset()
         :return: the new dataset after subsetting
-        :rtype: xr.Dataset
+        :rtype: xr.Dataset()
         """
         self.setup_subset_dialog_ui()
         self.subset_dialog.exec_()
 
         def subset_group(dataset):
-            """[summary]
-
-            :param dataset: [description]
-            :type dataset: [type]
-            :return: [description]
-            :rtype: [type]
-            """
             checked_group_list = self.get_selected_groups()
             if len(checked_group_list) == 0:
                 return dataset
 
             def get_obs_id_list(checked_group_list):
-                """[summary]
+                """Given a list of checked groups, this function returns a list
+                of obs_id arrays in those groups.
 
-                :param checked_group_list: [description]
-                :type checked_group_list: [type]
-                :return: [description]
-                :rtype: [type]
+                :param checked_group_list: List of groups that user selected
+                :type checked_group_list: List of strings
+                :return: A list of obs_id arrays in those groups
+                :rtype: List of lists
                 """
                 obs_id_list = []
                 for group in checked_group_list:
+                    # TODO: IMPLEMENT GROUPS OF GROUPS
                     obs_id = self.root_group['/{}/obs_id'.format(
                         group)][:].compressed()
                     obs_id_list.append(obs_id)
@@ -246,8 +255,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if "root" in checked_group_list:
                     checked_group_list.remove("root")
                 from functools import reduce
-                print(checked_group_list)
-                print(get_obs_id_list(checked_group_list))
                 obs_index_array = reduce(
                     np.intersect1d, get_obs_id_list(checked_group_list))
             else:
@@ -257,11 +264,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     get_obs_id_list(checked_group_list)))
 
             dataset = dataset.loc[dict(obs=obs_index_array)]
-            return dataset
+            if dataset['obs'].values.size:
+                return dataset
+            else:
+                self.show_error_messages(
+                    "No observation values satisfy user input range")
 
         def subset_location(dataset):
-            """Return a new dataset subset based on user's input on location
-            """
+            # TODO: change the code below to check whether the default lon/lat 
+            # values has been changed or not to avoid unnecessary computations
+
             (lon_max_input,
              lat_max_input,
              lon_min_input,
@@ -283,11 +295,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dataset = dataset.where(
                 lon_min <= dataset.coords['lon'], drop=True)
 
-            return dataset
+            if dataset['obs'].values.size:
+                return dataset
+            else:
+                self.show_error_messages(
+                    "No observation values satisfy user input range")
 
         def subset_time(dataset):
-            """Return a new dataset subset based on user's input on time
-            """
+            # TODO: change the code below to check whether the default text has
+            # been changed or not to avoid unnecessary computations
             (time_max_input,
              time_min_input) = (self.subset_dialog.time_max_input.text(),
                                 self.subset_dialog.time_min_input.text())
@@ -299,12 +315,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 time_min_input = np.datetime64(time_min_input)
                 dataset = dataset.where(
                     time_min_input <= dataset['time'], drop=True)
+
+            if dataset['obs'].values.size:
+                return dataset
+            else:
+                self.show_error_messages(
+                    "No observation values satisfy user input range")
             return dataset
 
         def subset_qc(dataset):
-            """Return a new dataset subset based on user's input on qc values
-            """
-            list_of_unchecked = []
+            list_of_checked = []
             list_of_checkboxes = [self.subset_dialog.qc_checkbox_0,
                                   self.subset_dialog.qc_checkbox_1,
                                   self.subset_dialog.qc_checkbox_2,
@@ -314,31 +334,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                   self.subset_dialog.qc_checkbox_6,
                                   self.subset_dialog.qc_checkbox_7,
                                   self.subset_dialog.qc_checkbox_8]
+
             for box in list_of_checkboxes:
-                if not box.isChecked():
-                    list_of_unchecked.append(
+                if box.isChecked():
+                    list_of_checked.append(
                         list_of_checkboxes.index(box))
+
             # If none of the boxes is checked, then treat it like box "All" is
             # checked
-            if (len(list_of_unchecked) == 9) or (
-                    8 not in list_of_unchecked):
+            if (len(list_of_checked) == 0) or (
+                    8 in list_of_checked):
                 return dataset
 
-            for i in list_of_unchecked:
-                dataset = dataset.where(i != dataset['qc'], drop=True)
-            try:
-                dataset = dataset.squeeze('qc_copy')
-            except BaseException:
-                # TODO: The varible qc has qc_copy x obs dinension. Therefore,
-                # when we use dataset.where with qc variable, the qc_copy
-                # dimension gets pushed to all other variables (play around
-                # with Jupyter Notebook to see this). Therefore, I have to
-                # squeeze the dataset (i.e. remove that dimension). If the
-                # squeezing fails for some reason (potentially because there
-                # are more than one qc_copy values), then I honestly do not
-                # know what to do.
-                print("Im not sure what to do")
-            return dataset
+            obs_index_array = np.concatenate([np.where(dataset['qc'].T[1].values == i)[
+                0] for i in list_of_checked], axis=0)
+
+            dataset = dataset.loc[dict(obs=obs_index_array)]
+            if dataset['obs'].values.size:
+                return dataset
+            else:
+                self.show_error_messages(
+                    "No observation values satisfy user input range")
 
         return subset_time(
             subset_qc(
@@ -348,6 +364,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def master_plot(self):
         """Generate all the necessary plots for a single netCDF file
+
+        The plots generated are:
+        - Geo 3D Plot
+        - Time series of quality control values
+        - Counts of observations based on QC Values
         """
         dataset = self.get_dataset_subset()
         variable = self.get_selected_var()
