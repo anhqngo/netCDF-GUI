@@ -201,20 +201,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         time = self.dataset['time'].values
         time_max = max(time)
         time_min = min(time)
-        self.subset_dialog.time_max_input.setText(
+        self.subset_dialog.time_max_input.setPlaceholderText(
             np.datetime_as_string(time_max, unit='s'))
-        self.subset_dialog.time_min_input.setText(
+        self.subset_dialog.time_min_input.setPlaceholderText(
             np.datetime_as_string(time_min, unit='s'))
 
-        self.subset_dialog.lon_max_input.setText(
+        self.subset_dialog.lon_max_input.setPlaceholderText(
             str(np.around(max(self.dataset['lon'].values), decimals=2)))
-        self.subset_dialog.lon_min_input.setText(
+        self.subset_dialog.lon_min_input.setPlaceholderText(
             str(np.around(min(self.dataset['lon'].values), decimals=2)))
 
-        self.subset_dialog.lat_max_input.setText(
+        self.subset_dialog.lat_max_input.setPlaceholderText(
             str(np.around(max(self.dataset['lat'].values), decimals=2)))
-        self.subset_dialog.lat_min_input.setText(
+        self.subset_dialog.lat_min_input.setPlaceholderText(
             str(np.around(min(self.dataset['lat'].values), decimals=2)))
+
+        # TODO: connect the following buttons to the right slots
+        self.subset_dialog.buttonBox.accepted.connect(
+            lambda: print("accepted"))
+        self.subset_dialog.buttonBox.rejected.connect(lambda: print("denied"))
 
     def get_dataset_subset(self):
         """Displays the subset dialog, takes user input, and returns the new
@@ -246,14 +251,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 :rtype: List of lists
                 """
                 obs_id_list = []
+                final_list = checked_group_list.copy()
+
                 for group in checked_group_list:
                     if self.root_group['{}'.format(group)].groups:
                         new_list = [
                             x for x in self.ds_group_list if re.search(
                                 r'^{}/+'.format(group), x)]
-                        checked_group_list.remove(group)
-                        checked_group_list += new_list
-                for group in checked_group_list:
+                        final_list.remove(group)
+                        final_list += new_list
+                for group in final_list:
                     obs_id = self.root_group['{}/obs_id'.format(
                         group)][:].compressed()
                     obs_id_list.append(obs_id)
@@ -282,9 +289,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     "No observation values satisfy user input range")
 
         def subset_location(dataset):
-            # TODO: change the code below to check whether the default lon/lat
-            # values has been changed or not to avoid unnecessary computations
-
             (lon_max_input,
              lat_max_input,
              lon_min_input,
@@ -292,19 +296,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                self.subset_dialog.lat_max_input.text(),
                                self.subset_dialog.lon_min_input.text(),
                                self.subset_dialog.lat_min_input.text())
-            lon_max = float(lon_max_input) if lon_max_input else np.Inf
-            lon_min = float(lon_min_input) if lon_min_input else -np.Inf
-            lat_max = float(lat_max_input) if lat_max_input else np.Inf
-            lat_min = float(lat_min_input) if lat_min_input else -np.Inf
-
-            dataset = dataset.where(
-                lat_max >= dataset.coords['lat'], drop=True)
-            dataset = dataset.where(
-                lat_min <= dataset.coords['lat'], drop=True)
-            dataset = dataset.where(
-                lon_max >= dataset.coords['lon'], drop=True)
-            dataset = dataset.where(
-                lon_min <= dataset.coords['lon'], drop=True)
+            if lon_max_input:
+                lon_max = float(lon_max_input)
+                dataset = dataset.where(
+                    lon_max >= dataset.coords['lon'], drop=True)
+            if lon_min_input:
+                lon_min = float(lon_min_input)
+                dataset = dataset.where(
+                    lon_min <= dataset.coords['lon'], drop=True)
+            if lat_max_input:
+                lat_max = float(lat_max_input)
+                dataset = dataset.where(
+                    lat_max >= dataset.coords['lat'], drop=True)
+            if lat_min_input:
+                lat_min = float(lat_min_input)
+                dataset = dataset.where(
+                    lat_min <= dataset.coords['lat'], drop=True)
 
             if dataset['obs'].values.size:
                 return dataset
@@ -313,8 +320,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     "No observation values satisfy user input range")
 
         def subset_time(dataset):
-            # TODO: change the code below to check whether the default text has
-            # been changed or not to avoid unnecessary computations
             (time_max_input,
              time_min_input) = (self.subset_dialog.time_max_input.text(),
                                 self.subset_dialog.time_min_input.text())
