@@ -1,0 +1,43 @@
+netcdf {obs_type} {
+dimensions:
+	obs = {obs} ;
+	copy = 166 ;
+	qc_copy = 2 ;
+variables:
+	int obs(obs);
+		obs:_FillValue = 90000 ;
+	double time(obs) ;
+		time:_FillValue = 90000 ;
+		time:long_name = "time of measurement" ;
+		time:units = "days since 1601-1-1" ;
+		time:calendar = "GREGORIAN" ;
+		time:valid_range = 1.15740740740741e-05, 510609. ;
+	double lon(obs) ;
+		lon:_FillValue = 90000 ;
+		lon:standard_name = "longitude" ;
+		lon:long_name = "longitude of the observation" ;
+		lon:units = "degrees_east" ;
+	double lat(obs) ;
+		lat:_FillValue = 90000 ;
+		lat:standard_name = "latitude" ;
+		lat:long_name = "latitude of the observation" ;
+		lat:units = "degrees_north" ;
+	double vertical(obs) ;
+		vertical:_FillValue = 90000 ;
+		vertical:long_name = "vertical distance above the surface" ;
+		vertical:standard_name = "height" ;
+	int qc(obs, qc_copy) ;
+		qc:long_name = "quality control values" ;
+		qc:ancillary_variables = "qc_copy" ;
+		qc:coordinates = "lat lon vertical time" ;
+	int qc_copy(qc_copy) ;
+		qc_copy:long_name = "quality control types" ;
+	int obs_key(obs) ;
+		obs_key:long_name = "DART key in linked list" ;
+		obs_key:coordinates = "lat lon vertical time" ;
+
+// global attributes:
+		:author = "Jason Ngo, SIParCS Intern" ;
+		:source = "DAReS|NCAR|UCAR" ;
+		:conventions = "CF-1.7" ;
+}
