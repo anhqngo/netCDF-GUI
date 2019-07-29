@@ -27,8 +27,6 @@ tests/datasets/*.nc
 
 # Sphinx build
 build
-_static
-_templates
 
 # Other
 format.sh
