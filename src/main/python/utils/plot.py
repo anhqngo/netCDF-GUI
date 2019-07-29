@@ -24,8 +24,7 @@ def geo_3d_plot(dataset, variable):
     """
     Display 3D scatter plot of a variable within a specific group in a dataset
     """
-    fig = plt.figure()
-    sns.set()
+    fig = plt.figure(dpi=100)
     ax = Axes3D(fig, xlim=[-180, 180], ylim=[-90, 90])
     ax.set_zlim(bottom=0)
 
@@ -60,7 +59,7 @@ def geo_3d_plot(dataset, variable):
             dataset['vertical'].values,
             c=dataset[variable].values,
             s=1,
-            alpha=0.3)
+            alpha=0.5)
     else:
         scatter_plot = ax.scatter(
             dataset['lon'].values,
@@ -68,7 +67,7 @@ def geo_3d_plot(dataset, variable):
             dataset['vertical'].values,
             c=dataset[variable].values,
             s=1,
-            alpha=0.3)
+            alpha=0.5)
 
     plt.colorbar(scatter_plot)
     ax.add_collection3d(scatter_plot)
