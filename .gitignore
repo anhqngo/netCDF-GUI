@@ -24,9 +24,13 @@ tests/datasets/test1_cdl
 tests/datasets/*.cdl
 tests/datasets/*.nc
 **/*.ipynb
+*.html
 
 # Sphinx build
 docs/
+_build
+_static
+_templates
 
 # Other
 format.sh

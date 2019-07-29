@@ -1,4 +1,4 @@
 export DEVELOPMENT=true
-export TEST_FILE="tests/datasets/proposed_standard/salinity_4.nc"
+export TEST_FILE="tests/datasets/test1_groups/aircraft_temperature.nc"
 
 fbs run
