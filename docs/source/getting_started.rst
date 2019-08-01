@@ -31,6 +31,4 @@ types of netCDF files, please use other tools like `Panoply <https://www.giss.na
 Installation
 ************
 
-.. TODO: link to installation file
-
-Download the binary installation file.
+Download the binary installation file `here <https://github.com/ngojason9/netCDF-GUI/releases/tag/v0.0.2>`_.
