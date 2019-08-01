@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="main module" href="main.html" />
+    <link rel="next" title="main module" href="modules/main.html" />
     <link rel="prev" title="User Guide" href="user_guide.html" /> 
 </head>
 
@@ -82,12 +82,20 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-user-interface">Modifying User Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-functionalities">Modifying functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-documentation">Modifying documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-framework">Testing framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules-and-packages">Modules and Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/main.html">main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/ui.html">ui package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/utils.html">utils package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -156,25 +164,90 @@
             
   <div class="section" id="development">
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
-<p>Hello there, this section contains all the documentation for the modules and
-packages</p>
+<p>Hello fellow developers! This page will get you started on developing the graphical user interface.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Before getting a local copy of the repository on your machine, make sure that you have the following requirements:</p>
+<ul class="simple">
+<li><p>Python 3 (the GUI was built with Python 3.6) and pip</p></li>
+<li><p><a class="reference external" href="https://proj.org/install.html?highlight=exe/">PROJ4</a></p></li>
+</ul>
+<p>Now, go ahead and clone the repository to your local machine:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ngojason9</span><span class="o">/</span><span class="n">netCDF</span><span class="o">-</span><span class="n">GUI</span>
+<span class="n">cd</span> <span class="n">netCDF</span><span class="o">-</span><span class="n">GUI</span>
+</pre></div>
+</div>
+<p>Here is the directory tree of the repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── README.md
+├── docs
+│   ├── ...
+│   └── source
+├── requirements.txt
+├── run.sh
+├── src
+│   ├── build
+│   └── main
+│       ├── icons
+│       ├── python
+│       └── resources
+├── tests
+│   ├── datasets
+│   └── jupyter_tests
+└── ui2py.sh
+</pre></div>
+</div>
+<p>Now, let’s install all dependencies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Once you have installed all dependencies, go ahead and type <code class="docutils literal notranslate"><span class="pre">fbs</span> <span class="pre">run</span></code> into the terminal; the GUI should pop up.</p>
+</div>
+<div class="section" id="modifying-user-interface">
+<h2>Modifying User Interface<a class="headerlink" href="#modifying-user-interface" title="Permalink to this headline">¶</a></h2>
+<p>The interface was built with Qt, a cross-platform software development framework. If you want to make changes to the interface, first install <a class="reference external" href="https://build-system.fman.io/qt-designer-download">Qt Designer</a>.</p>
+<p>Once you have installed Qt Designer, you can open the <code class="docutils literal notranslate"><span class="pre">.ui</span></code> files in <code class="docutils literal notranslate"><span class="pre">src/main/resources/designer</span></code>. After you have made changes to the interface, run the bash script <code class="docutils literal notranslate"><span class="pre">ui2py.sh</span></code> to convert all the designer files to Python classes that can be imported to <code class="docutils literal notranslate"><span class="pre">main.py</span></code>.</p>
+<p>There are a lot of Qt Tutorials online, go check them out!</p>
+</div>
+<div class="section" id="modifying-functionalities">
+<h2>Modifying functionalities<a class="headerlink" href="#modifying-functionalities" title="Permalink to this headline">¶</a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">src/main/python</span></code>, you will see:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">main.py</span></code>, which includes all the logic for our GUI. As an alternative to the command <code class="docutils literal notranslate"><span class="pre">fbs</span> <span class="pre">run</span></code>, you can also execute the file <code class="docutils literal notranslate"><span class="pre">main.py</span></code> in the terminal to start the GUI</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui</span></code> package, which includes Python scripts that renders the interface</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">utils</span></code> package, which incldues helper plotting functions, or I/O functions.</p></li>
+</ul>
+<p>If you want to modify/add more functionalities, go ahead and find or add the relevant modules.</p>
+</div>
+<div class="section" id="modifying-documentation">
+<h2>Modifying documentation<a class="headerlink" href="#modifying-documentation" title="Permalink to this headline">¶</a></h2>
+<p>All the source files for documentation are in <code class="docutils literal notranslate"><span class="pre">docs/source</span></code>. I used <code class="docutils literal notranslate"><span class="pre">Sphinx</span></code> to generate <code class="docutils literal notranslate"><span class="pre">.html</span></code> files from <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files.</p>
+<p>All the HTML files are hosted on branch <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> separately from the source code <code class="docutils literal notranslate"><span class="pre">master</span></code> branch. Generate the HTML files with Sphinx, and then copy all the HTML files to that branch.</p>
+<p>The documentation is included in the repository (on <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch) and online at <a class="reference external" href="https://jasonngo.net/netCDF-GUI">https://jasonngo.net/netCDF-GUI</a></p>
+</div>
+<div class="section" id="testing-framework">
+<h2>Testing framework<a class="headerlink" href="#testing-framework" title="Permalink to this headline">¶</a></h2>
+<p>Currently, the GUI does not have any testing framework. I have looked at a few testing options such as <code class="docutils literal notranslate"><span class="pre">selenium</span></code> and <code class="docutils literal notranslate"><span class="pre">pytest-qt</span></code> but have not had time to implement those testing frameworks.</p>
+<p>In the future, it is highly desired that there is a GUI testing framework in place.</p>
+</div>
+<div class="section" id="modules-and-packages">
+<h2>Modules and Packages<a class="headerlink" href="#modules-and-packages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils">Module contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.io">utils.io module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.plot">utils.plot module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/ui.html">ui package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/ui.html#module-ui">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ui.html#module-ui.main_window">ui.main_window module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ui.html#module-ui.subset_dialog">ui.subset_dialog module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="ui.html">ui package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui">Module contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui.main_window">ui.main_window module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui.subset_dialog">ui.subset_dialog module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/utils.html">utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html#module-utils">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html#module-utils.io">utils.io module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html#module-utils.plot">utils.plot module</a></li>
 </ul>
 </li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -186,7 +259,7 @@ packages</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="main.html" class="btn btn-neutral float-right" title="main module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="modules/main.html" class="btn btn-neutral float-right" title="main module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="user_guide.html" class="btn btn-neutral float-left" title="User Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

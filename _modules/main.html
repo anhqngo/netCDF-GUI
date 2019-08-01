@@ -80,7 +80,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dev.html">Development</a></li>
 </ul>
@@ -179,7 +179,7 @@
 <span class="kn">from</span> <span class="nn">utils.plot</span> <span class="k">import</span> <span class="n">geo_3d_plot</span><span class="p">,</span> <span class="n">time_series_qc_plot</span><span class="p">,</span> <span class="n">qc_observations_plot</span>
 
 
-<div class="viewcode-block" id="AppContext"><a class="viewcode-back" href="../main.html#main.AppContext">[docs]</a><span class="k">class</span> <span class="nc">AppContext</span><span class="p">(</span><span class="n">ApplicationContext</span><span class="p">):</span>
+<div class="viewcode-block" id="AppContext"><a class="viewcode-back" href="../modules/main.html#main.AppContext">[docs]</a><span class="k">class</span> <span class="nc">AppContext</span><span class="p">(</span><span class="n">ApplicationContext</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class sets up Application context for fman build</span>
 
 <span class="sd">    :param: ApplicationContext</span>
@@ -187,7 +187,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AppContext.run"><a class="viewcode-back" href="../main.html#main.AppContext.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AppContext.run"><a class="viewcode-back" href="../modules/main.html#main.AppContext.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
@@ -203,7 +203,7 @@
         <span class="k">return</span> <span class="n">main_window</span></div>
 
 
-<div class="viewcode-block" id="MainWindow"><a class="viewcode-back" href="../main.html#main.MainWindow">[docs]</a><span class="k">class</span> <span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_MainWindow</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow"><a class="viewcode-back" href="../modules/main.html#main.MainWindow">[docs]</a><span class="k">class</span> <span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_MainWindow</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class that renders the main window for the GUI</span>
 
 <span class="sd">    :param QMainWindow: Default class for main window in PyQt5</span>
@@ -223,14 +223,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setup_validators</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">open_file_dialog</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MainWindow.setup_slots"><a class="viewcode-back" href="../main.html#main.MainWindow.setup_slots">[docs]</a>    <span class="k">def</span> <span class="nf">setup_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.setup_slots"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.setup_slots">[docs]</a>    <span class="k">def</span> <span class="nf">setup_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function connects pre-existing signals with the correct slots</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionOpen</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_file_dialog</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obsIndexPush</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_parent_groups</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master_plot</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MainWindow.setup_validators"><a class="viewcode-back" href="../main.html#main.MainWindow.setup_validators">[docs]</a>    <span class="k">def</span> <span class="nf">setup_validators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.setup_validators"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.setup_validators">[docs]</a>    <span class="k">def</span> <span class="nf">setup_validators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function adds value validator for user input field. Users cannot</span>
 <span class="sd">        input unspecified values.</span>
 
@@ -242,7 +242,7 @@
                 <span class="n">QRegExp</span><span class="p">(</span><span class="s2">&quot;[0-9]+&quot;</span><span class="p">),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">obsIndexInput</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="MainWindow.show_error_messages"><a class="viewcode-back" href="../main.html#main.MainWindow.show_error_messages">[docs]</a>    <span class="k">def</span> <span class="nf">show_error_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_message</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.show_error_messages"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.show_error_messages">[docs]</a>    <span class="k">def</span> <span class="nf">show_error_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_message</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function display an error message dialog to the user</span>
 
 <span class="sd">        :param error_message: Name of the error that the user is encountering</span>
@@ -253,7 +253,7 @@
         <span class="n">error_dialog</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
         <span class="n">error_dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MainWindow.open_file_dialog"><a class="viewcode-back" href="../main.html#main.MainWindow.open_file_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">open_file_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.open_file_dialog"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.open_file_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">open_file_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open a dialog for user to chose their dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -276,7 +276,7 @@
             <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Invalid. Please choose a different file&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">show_error_messages</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MainWindow.show_dataset_info"><a class="viewcode-back" href="../main.html#main.MainWindow.show_dataset_info">[docs]</a>    <span class="k">def</span> <span class="nf">show_dataset_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.show_dataset_info"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.show_dataset_info">[docs]</a>    <span class="k">def</span> <span class="nf">show_dataset_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the general information about the dataset and list all the</span>
 <span class="sd">        variables on the GUI</span>
@@ -296,7 +296,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">group_dict</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_checkbox&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">group_dict</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">group</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MainWindow.show_parent_groups"><a class="viewcode-back" href="../main.html#main.MainWindow.show_parent_groups">[docs]</a>    <span class="k">def</span> <span class="nf">show_parent_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.show_parent_groups"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.show_parent_groups">[docs]</a>    <span class="k">def</span> <span class="nf">show_parent_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Display all the groups that an observation is in based on user&#39;s</span>
 <span class="sd">        input of observation index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -316,7 +316,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parentGroupList</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parentGroupList</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;No groups available&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MainWindow.get_selected_var"><a class="viewcode-back" href="../main.html#main.MainWindow.get_selected_var">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.get_selected_var"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.get_selected_var">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get variable selection from user input</span>
 
 <span class="sd">        :return: variable name</span>
@@ -329,7 +329,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">show_error_messages</span><span class="p">(</span>
                 <span class="s2">&quot;Please choose a variable from the list to plot&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MainWindow.get_selected_groups"><a class="viewcode-back" href="../main.html#main.MainWindow.get_selected_groups">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.get_selected_groups"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.get_selected_groups">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get group selection from user input</span>
 
 <span class="sd">        :return: list of group names</span>
@@ -342,7 +342,7 @@
                 <span class="n">list_of_checked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">checkbox_string</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">list_of_checked</span></div>
 
-<div class="viewcode-block" id="MainWindow.setup_subset_dialog_ui"><a class="viewcode-back" href="../main.html#main.MainWindow.setup_subset_dialog_ui">[docs]</a>    <span class="k">def</span> <span class="nf">setup_subset_dialog_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.setup_subset_dialog_ui"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.setup_subset_dialog_ui">[docs]</a>    <span class="k">def</span> <span class="nf">setup_subset_dialog_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function pre-fills the min and max values for time, lat and lon</span>
 <span class="sd">        input fields</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -369,7 +369,7 @@
             <span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accepted&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subset_dialog</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;denied&quot;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="MainWindow.get_dataset_subset"><a class="viewcode-back" href="../main.html#main.MainWindow.get_dataset_subset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.get_dataset_subset"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.get_dataset_subset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Displays the subset dialog, takes user input, and returns the new</span>
 <span class="sd">        dataset subset.</span>
 
@@ -525,7 +525,7 @@
                     <span class="n">subset_group</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">))))</span></div>
 
-<div class="viewcode-block" id="MainWindow.master_plot"><a class="viewcode-back" href="../main.html#main.MainWindow.master_plot">[docs]</a>    <span class="k">def</span> <span class="nf">master_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MainWindow.master_plot"><a class="viewcode-back" href="../modules/main.html#main.MainWindow.master_plot">[docs]</a>    <span class="k">def</span> <span class="nf">master_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate all the necessary plots for a single netCDF file</span>
 
 <span class="sd">        The plots generated are:</span>
@@ -550,7 +550,7 @@
                 <span class="s2">&quot;No observation values satisfy user input range&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="SubsetDialog"><a class="viewcode-back" href="../main.html#main.SubsetDialog">[docs]</a><span class="k">class</span> <span class="nc">SubsetDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_subset_dialog</span><span class="p">):</span>
+<div class="viewcode-block" id="SubsetDialog"><a class="viewcode-back" href="../modules/main.html#main.SubsetDialog">[docs]</a><span class="k">class</span> <span class="nc">SubsetDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_subset_dialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class displays the UI for SubsetDialog</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

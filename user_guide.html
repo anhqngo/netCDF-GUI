@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Development" href="dev.html" />
-    <link rel="prev" title="Getting Started" href="intro.html" /> 
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,12 +82,12 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#open-file">Open File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#inspect-file">Inspect File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#look-up-parent-groups">Look up Parent Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#plot">Plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#look-up-observation-index">Look up Observation Index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#feedback">Feedback</a></li>
 </ul>
 </li>
@@ -162,18 +162,40 @@
 Viewer</p>
 <div class="section" id="open-file">
 <h2>Open File<a class="headerlink" href="#open-file" title="Permalink to this headline">¶</a></h2>
+<p>When you open the GUI, you will be prompted to choose a netCDF file. Alternatively, you can choose to open the file by navigating  through the menubar <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Open..</span></code>.</p>
 </div>
 <div class="section" id="inspect-file">
 <h2>Inspect File<a class="headerlink" href="#inspect-file" title="Permalink to this headline">¶</a></h2>
+<p>Once you open the file, you will be greeted with the following interface:</p>
+<div class="figure align-default" id="id1">
+<a class="reference internal image-reference" href="_images/GUI_interface.png"><img alt="GUI interface" src="_images/GUI_interface.png" style="width: 448.8px; height: 471.59999999999997px;" /></a>
+<p class="caption"><span class="caption-text">DART Viewer User Interface</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>On the left you can see a box containing the header contents of the file. Users can therefore inspect quickly the dimensions, coordinates and variables of the file.</p>
+</div>
+<div class="section" id="look-up-parent-groups">
+<h2>Look up Parent Groups<a class="headerlink" href="#look-up-parent-groups" title="Permalink to this headline">¶</a></h2>
+<p>Below the header contents is the index look up box. Because in our implementation of netCDF file, each observation can be in multiple groups, you query for all the parents groups that an observation is in by inputting its index in the field.</p>
 </div>
 <div class="section" id="plot">
 <h2>Plot<a class="headerlink" href="#plot" title="Permalink to this headline">¶</a></h2>
+<p>Now, on the right hand side is the plotting panel. Users will first choose a variable that they want to plot from the list of variables in the file. Users will then choose to plot all the observations of that variable in which groups. Here, the root group represents the entire dataset.
+Logic operators indicating whether I want to plot the intersection of these two groups, or the union of the two groups.</p>
+<p>Once you click plot. a subset dialog will pop up, pre-filled with the min and max values of the lon/lat and time coordinates. Users can make changes to these prefilled values to inspect a specific region in space or time.</p>
+<div class="figure align-default" id="id2">
+<a class="reference internal image-reference" href="_images/subset_dialog.png"><img alt="DART Viewer Subset Dialog" src="_images/subset_dialog.png" style="width: 515.0px; height: 608.0px;" /></a>
+<p class="caption"><span class="caption-text">DART Viewer Subset Dialog</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
-<div class="section" id="look-up-observation-index">
-<h2>Look up Observation Index<a class="headerlink" href="#look-up-observation-index" title="Permalink to this headline">¶</a></h2>
+<p>Below is the DART Quality Control selections. Each observation is assigned a DART quality control value, indicating whether that observation is assimilated, evaluated or rejected. There are 7 quality control in total. For now, let’s not make any changes and click “plot”. The default value for DART Quality Control Selection is All.</p>
+<p>Right now, DART Viewer can generate three plots:
+- 3D Scatter plot of point data
+- Quality control time series
+- Distribution of quality control values</p>
+<p><em>More customizable plots will be added in the future.</em></p>
 </div>
 <div class="section" id="feedback">
 <h2>Feedback<a class="headerlink" href="#feedback" title="Permalink to this headline">¶</a></h2>
+<p>Any feedback should be sent to <a class="reference external" href="mailto:dart&#37;&#52;&#48;ucar&#46;edu">dart<span>&#64;</span>ucar<span>&#46;</span>edu</a> or <a class="reference external" href="mailto:ngojason9&#37;&#52;&#48;gmail&#46;com">ngojason9<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </div>
 </div>
 
@@ -188,7 +210,7 @@ Viewer</p>
         <a href="dev.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="intro.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

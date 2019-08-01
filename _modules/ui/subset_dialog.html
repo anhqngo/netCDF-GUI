@@ -80,7 +80,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dev.html">Development</a></li>
 </ul>
@@ -158,8 +158,8 @@
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
 
-<div class="viewcode-block" id="Ui_subset_dialog"><a class="viewcode-back" href="../../ui.html#ui.subset_dialog.Ui_subset_dialog">[docs]</a><span class="k">class</span> <span class="nc">Ui_subset_dialog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<div class="viewcode-block" id="Ui_subset_dialog.setupUi"><a class="viewcode-back" href="../../ui.html#ui.subset_dialog.Ui_subset_dialog.setupUi">[docs]</a>    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_dialog</span><span class="p">):</span>
+<div class="viewcode-block" id="Ui_subset_dialog"><a class="viewcode-back" href="../../modules/ui.html#ui.subset_dialog.Ui_subset_dialog">[docs]</a><span class="k">class</span> <span class="nc">Ui_subset_dialog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Ui_subset_dialog.setupUi"><a class="viewcode-back" href="../../modules/ui.html#ui.subset_dialog.Ui_subset_dialog.setupUi">[docs]</a>    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_dialog</span><span class="p">):</span>
         <span class="n">subset_dialog</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;subset_dialog&quot;</span><span class="p">)</span>
         <span class="n">subset_dialog</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">388</span><span class="p">,</span> <span class="mi">459</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout_2</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGridLayout</span><span class="p">(</span><span class="n">subset_dialog</span><span class="p">)</span>
@@ -254,7 +254,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">subset_dialog</span><span class="o">.</span><span class="n">reject</span><span class="p">)</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QMetaObject</span><span class="o">.</span><span class="n">connectSlotsByName</span><span class="p">(</span><span class="n">subset_dialog</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ui_subset_dialog.retranslateUi"><a class="viewcode-back" href="../../ui.html#ui.subset_dialog.Ui_subset_dialog.retranslateUi">[docs]</a>    <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_dialog</span><span class="p">):</span>
+<div class="viewcode-block" id="Ui_subset_dialog.retranslateUi"><a class="viewcode-back" href="../../modules/ui.html#ui.subset_dialog.Ui_subset_dialog.retranslateUi">[docs]</a>    <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_dialog</span><span class="p">):</span>
         <span class="n">_translate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span>
         <span class="n">subset_dialog</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;subset_dialog&quot;</span><span class="p">,</span> <span class="s2">&quot;Dialog&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lon_max_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;subset_dialog&quot;</span><span class="p">,</span> <span class="s2">&quot;Lon max&quot;</span><span class="p">))</span>

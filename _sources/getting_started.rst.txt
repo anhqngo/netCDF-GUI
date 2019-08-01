@@ -19,24 +19,18 @@ model performance and assimilation process.
 Features
 *********
 
-- 2D and 3D scatter plot
+- 3D scatter plot
 - Subset the dataset with respect to geolocation
 - Subset the dataset with respect to predefined groups
 - Logic operator support for combinations of the subset criteria
 - Basic database query functionalities
 
-*Note: DART Viewer only works with DART output netCDF files. To visualize other
-types of netCDF files, please use other tools like Panoply or IDV.*
+Note: DART Viewer only works with DART output netCDF files. Sample test files can be found in the ``tests/datasets`` directory. To visualize other
+types of netCDF files, please use other tools like `Panoply <https://www.giss.nasa.gov/tools/panoply/>`_ or `IDV <https://www.unidata.ucar.edu/software/idv/>`_.
 
 Installation
 ************
 
-Requirements
-============
-- Python 3 and pip
-- `PROJ4 <https://proj.org/install.html?highlight=exe/>`_
+.. TODO: link to installation file
 
-Building
-=========
-Download the binary installation file. Since I do not own a Mac Development
-license, users might need to go to setting and trust to open the applications.
+Download the binary installation file.

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>python &mdash; DART Viewer 0.0.2 documentation</title>
+  <title>Getting Started &mdash; DART Viewer 0.0.2 documentation</title>
   
 
   
@@ -34,7 +34,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Guide" href="user_guide.html" />
+    <link rel="prev" title="Welcome to DART Viewer’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -79,8 +81,13 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
 </ul>
@@ -128,13 +135,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>python</li>
+      <li>Getting Started</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -147,24 +154,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="python">
-<h1>python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ui.html">ui package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui">Module contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui.main_window">ui.main_window module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ui.html#module-ui.subset_dialog">ui.subset_dialog module</a></li>
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>The Data Assimilation Research Testbed (DART) is an open-source community
+software facility for ensemble data assimilation developed at the National
+Center for Atmospheric Research (NCAR). The DART distribution includes MATLAB
+diagnostic tools that examine the differences between observed values and
+predicted values from a model.</p>
+<p>The output for these diagnostic tools are netCDF files containing ensemble
+values and relevant metadata. The cross-platform DART Viewer application is
+designed to help users quickly visualize those output files to understand their
+model performance and assimilation process.</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>3D scatter plot</p></li>
+<li><p>Subset the dataset with respect to geolocation</p></li>
+<li><p>Subset the dataset with respect to predefined groups</p></li>
+<li><p>Logic operator support for combinations of the subset criteria</p></li>
+<li><p>Basic database query functionalities</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils">Module contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.io">utils.io module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.plot">utils.plot module</a></li>
-</ul>
-</li>
-</ul>
+<p>Note: DART Viewer only works with DART output netCDF files. Sample test files can be found in the <code class="docutils literal notranslate"><span class="pre">tests/datasets</span></code> directory. To visualize other
+types of netCDF files, please use other tools like <a class="reference external" href="https://www.giss.nasa.gov/tools/panoply/">Panoply</a> or <a class="reference external" href="https://www.unidata.ucar.edu/software/idv/">IDV</a>.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Download the binary installation file.</p>
 </div>
 </div>
 
@@ -173,6 +191,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="user_guide.html" class="btn btn-neutral float-right" title="User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to DART Viewer’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
